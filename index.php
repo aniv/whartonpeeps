@@ -47,9 +47,49 @@ if ($user_id) {
 <!DOCTYPE html>
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
+		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
 	</head>
 <body>
     <div id="fb-root"></div>
+	<div class="container">
+		<div class="hero-unit">
+			<h1>WhartonPeeps</h1>
+			<p>Map your WG'14 peeps</p>
+			<?php if(!isset($basic)) { ?>
+		    	<div class="fb-login-button" data-scope="user_groups" width="500px"></div>
+			<?php 
+				} 
+				else { 
+					// Wharton = 169174513170821
+					// Test = 330277880384395
+				    $groupsW = $facebook->api(array(
+				        'method' => 'fql.query',
+				        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
+				    ));
+
+				    $groupsT = $facebook->api(array(
+				        'method' => 'fql.query',
+				        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
+				    ));
+
+					d($groupsW);
+					d($groupsT);
+
+					if (isset($groups['data']['uid'], $groups['data']['gid']))
+					{
+						echo '<div>';
+						echo 'User is in group <br/>';
+						echo '</div>';
+					}
+
+					echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out URL</a></div>';
+				}
+				?>
+		</div>
+	</div>
+
+
     <script type="text/javascript">
     window.fbAsyncInit = function() {
         FB.init({
@@ -87,35 +127,5 @@ if ($user_id) {
     }(document, 'script', 'facebook-jssdk'));
     </script>
 
-	<?php if(!isset($basic)) { ?>
-    <div class="fb-login-button" data-scope="user_likes,user_photos"></div>
-	<?php 
-		} 
-		else { 
-			// Wharton = 169174513170821
-			// Test = 330277880384395
-		    $groupsW = $facebook->api(array(
-		        'method' => 'fql.query',
-		        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
-		    ));
-
-		    $groupsT = $facebook->api(array(
-		        'method' => 'fql.query',
-		        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
-		    ));
-
-			d($groupsW);
-			d($groupsT);
-
-			if (isset($groups['data']['uid'], $groups['data']['gid']))
-			{
-				echo '<div>';
-				echo 'User is in group <br/>';
-				echo '</div>';
-			}
-			
-			echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out URL</a></div>';
-		}
-		?>
 </body>
 </html>
