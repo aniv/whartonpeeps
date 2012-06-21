@@ -27,7 +27,10 @@ $facebook = new Facebook(array(
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
 		<title>WhartonPeeps</title>
+		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
+		<script type="text/javascript" src="javascript/gmaps.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
 
 		<script type="text/javascript">
@@ -45,49 +48,15 @@ $facebook = new Facebook(array(
 		</script>
 	</head>
 <body>
-    <div id="fb-root"></div>
-	<div class="container">
-		<div class="hero-unit">
-			<div class="row">
-				<div class="span1">
-					<img src="images/Map2.png" width=60 height=60/>
-				</div>
-				<div class="span9">
-					<h1>WhartonPeeps</h1>
-					<p>Map your WG'14 peeps</p>
-					<br/>
-
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="span10">
-					<?php
-					$user_id = $facebook->getUser();
-
-					if ($user_id) {
-					    try {
-					        # Fetch the viewer's basic information
-					        $basic = $facebook->api('/me');
-							d($basic);
-					
-					    } catch (FacebookApiException $e) {
-					        if (!$facebook->getUser()) {
-					            header('Location: ' . AppInfo::getUrl($_SERVER['REQUEST_URI']));
-					            exit();
-					        }
-					    }
-					}
-					?>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="span2 offset1">
-					<a href="about.php">About</a> | <a href="privacy.php">Privacy</a>
-				</div>
-			</div>
-		</div>
-	</div>
+	<div id="fullScreenMap"></div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var map = new GMaps({
+				div: '#fullScreenMap',
+				lat: 39.949457,
+				lng: -75.171998
+			})
+		});
+	</script>
 </body>
 </html>
