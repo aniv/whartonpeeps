@@ -48,15 +48,67 @@ $facebook = new Facebook(array(
 		</script>
 	</head>
 <body>
-	<div id="fullScreenMap"></div>
-	<script type="text/javascript">
-		$(document).ready(function(){
-			var map = new GMaps({
-				div: '#fullScreenMap',
-				lat: 39.949457,
-				lng: -75.171998
-			})
-		});
-	</script>
+	<div class="container-fluid">
+	<div class="row-fluid">
+		<form method="post" class="form-inline">
+			<input type="text" class="span6" placeholder="Your address">
+			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Add it!</button>
+		</form>
+	</div>
+	
+	<div class="row-fluid">
+		<div id="fullScreenMap" class="span12"></div>
+		<script type="text/javascript">
+	
+			var map;
+			var overlays = [];
+	
+			function clickHandler(e)
+			{
+				console.log("clicked");
+			}
+			
+			function rightClickHandler(e)
+			{
+				console.log("right clicked");
+				console.log("latitude: " + e.latLng.lat() + " and long: " + e.latLng.lng());
+				
+				overlayIndex = overlays.length;
+
+				o = map.drawOverlay({
+					lat: e.latLng.lat(),
+					lng: e.latLng.lng(),
+					content: "<div>New place here? " + overlayIndex + "</div>"
+				});
+				
+				overlays.push(o);
+			}
+		
+			function addMarker(lat, long, title, markerClickHandler, infoWindowContent)
+			{
+				map.addMarker({
+					lat: lat,
+					lng: long,
+					title: title,
+					click: markerClickHandler,
+					infoWindow : {
+						content: infoWindowContent
+					}
+				});
+			}
+	
+			$(document).ready(function(){
+				map = new GMaps({
+					div: '#fullScreenMap',
+					lat: 39.949457,
+					lng: -75.171998,
+					height: ($(window).height()-46)+'px',
+					click: clickHandler
+					//rightclick: rightClickHandler
+				})
+			});
+		</script>
+	</div>
+	</div>
 </body>
 </html>
