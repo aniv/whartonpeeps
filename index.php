@@ -40,7 +40,7 @@ if ($user_id) {
         }
     }
 
-	$groups = idx($facebook->api('/me/groups'), 'data', array());
+	$groups = $facebook->api('/me/groups'); //idx($facebook->api('/me/groups'), 'data', array());
 	d($groups);
 }
 
