@@ -42,7 +42,7 @@ if ($user_id) {
 
     $groups = $facebook->api(array(
         'method' => 'fql.query',
-        'query' => 'SELECT gid, name, description FROM group WHERE gid = 169174513170821'
+        'query' => 'SELECT uid, gid, name, description FROM group_member WHERE gid = 169174513170821 AND uid=me()'
     ));
 
 	d($groups);
