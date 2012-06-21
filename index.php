@@ -94,12 +94,18 @@ if ($user_id) {
 		else { 
 			// Wharton = 169174513170821
 			// Test = 330277880384395
-		    $groups = $facebook->api(array(
+		    $groupsW = $facebook->api(array(
 		        'method' => 'fql.query',
 		        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
 		    ));
 
-			d($groups);
+		    $groupsT = $facebook->api(array(
+		        'method' => 'fql.query',
+		        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
+		    ));
+
+			d($groupsW);
+			d($groupsT);
 
 			if (isset($groups['data']['uid'], $groups['data']['gid']))
 			{
