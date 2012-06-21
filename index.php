@@ -38,15 +38,12 @@ if ($user_id) {
     }
 }
 
-// $facebook->getLogoutUrl(array('next'=>'http://localhost/Dev/...'));
-// $facebook->destroySession();
-// echo 'Destroyed session <br/>';
-
 ?>
 
 <!DOCTYPE html>
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
+		<title>WhartonPeeps</title>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
 	</head>
@@ -57,8 +54,8 @@ if ($user_id) {
 			<h1>WhartonPeeps</h1>
 			<p>Map your WG'14 peeps</p>
 			<?php if(!isset($basic)) { ?>
-		    	<div class="fb-login-button" size="xlarge" data-scope="user_groups"  scope="user_groups" width="500px"></div>
-				<fb:login-button size="xlarge" data-scope="user_groups" scope="user_groups" onlogin="Log.info('onlogin callback')">Log In</fb:login-button>
+				<br/>
+		    	<div class="fb-login-button" size="xlarge" data-scope="user_groups" scope="user_groups"></div>
 			<?php 
 				} 
 				else { 
