@@ -134,7 +134,9 @@ if ($user_id) {
             // window.location.reload() because if this is in a canvas there was a
             // post made to this page and a reload will trigger a message to the
             // user asking if they want to send data again.
-            window.location = window.location;
+
+            //window.location = window.location;
+			window.location = "http://whartonpeeps.phpfogapp.com/main.php";
         });
 
         FB.Canvas.setAutoGrow();
