@@ -44,6 +44,8 @@ if ($user_id) {
         'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
     ));
 
+	d($groups);
+	
 	if (isset($groups['data']['uid'], $groups['data']['gid']))
 	{
 		// Valid user
@@ -53,8 +55,8 @@ if ($user_id) {
 }
 
 // $facebook->getLogoutUrl(array('next'=>'http://localhost/Dev/...'));
-$facebook->destroySession();
-echo 'Destroyed session <br/>';
+// $facebook->destroySession();
+// echo 'Destroyed session <br/>';
 
 ?>
 
@@ -100,5 +102,11 @@ echo 'Destroyed session <br/>';
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
     </script>
+
+	<?php if(!isset($basic)) { ?>
+    <div class="fb-login-button" data-scope="user_likes,user_photos"></div>
+	<?php } else { ?>
+	<div></div>
+	<?php }        ?>
 </body>
 </html>
