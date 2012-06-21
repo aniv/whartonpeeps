@@ -58,7 +58,10 @@ echo 'Destroyed session <br/>';
 
 ?>
 
-<html>
+<!DOCTYPE html>
+<html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
+    <head>
+	</head>
 <body>
     <div id="fb-root"></div>
     <script type="text/javascript">
