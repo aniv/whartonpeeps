@@ -53,7 +53,7 @@ if ($user_id) {
 <body>
     <div id="fb-root"></div>
 	<div class="container">
-		<div class="hero-unit" style="position:absolute;top:50%">
+		<div class="hero-unit" style="position:absolute; top:50%; height:120px; margin-top:-60px">
 			<h1>WhartonPeeps</h1>
 			<p>Map your WG'14 peeps</p>
 			<?php if(!isset($basic)) { ?>
