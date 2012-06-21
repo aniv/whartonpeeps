@@ -65,10 +65,10 @@ if ($user_id) {
 	<div class="container">
 		<div class="hero-unit">
 			<div class="row">
-				<div class="span2">
+				<div class="span1">
 					<img src="images/Map2.png" width=60 height=60/>
 				</div>
-				<div class="span10">
+				<div class="span9">
 					<h1>WhartonPeeps</h1>
 					<p>Map your WG'14 peeps</p>
 					<?php if(!isset($basic)) { ?>
@@ -108,7 +108,7 @@ if ($user_id) {
 			<br/>
 
 			<div class="row">
-				<div class="span2 offset2">
+				<div class="span2 offset1">
 					<a href="about.php">About</a> | <a href="privacy.php">Privacy</a>
 				</div>
 			</div>
