@@ -51,39 +51,51 @@ if ($user_id) {
     <div id="fb-root"></div>
 	<div class="container">
 		<div class="hero-unit">
-			<h1>WhartonPeeps</h1>
-			<p>Map your WG'14 peeps</p>
-			<?php if(!isset($basic)) { ?>
-				<br/>
-		    	<div class="fb-login-button" size="xlarge" data-scope="user_groups" scope="user_groups"></div>
-			<?php 
-				} 
-				else { 
-					// Wharton = 169174513170821
-					// Test = 330277880384395
-				    $groupsW = $facebook->api(array(
-				        'method' => 'fql.query',
-				        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
-				    ));
+			<div class="row">
+				<div class="span2">
+					<img src="images/Map2.png" width=60 height=60/>
+				</div>
+				<div class="span10">
+					<h1>WhartonPeeps</h1>
+					<p>Map your WG'14 peeps</p>
+					<?php if(!isset($basic)) { ?>
+					<br/>
+			    	<div class="fb-login-button" size="xlarge" data-scope="user_groups" scope="user_groups"></div>
+					<?php 
+						} 
+						else { 
+							// Wharton = 169174513170821
+							// Test = 330277880384395
+						    $groupsW = $facebook->api(array(
+						        'method' => 'fql.query',
+						        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
+						    ));
 
-				    $groupsT = $facebook->api(array(
-				        'method' => 'fql.query',
-				        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
-				    ));
+						    $groupsT = $facebook->api(array(
+						        'method' => 'fql.query',
+						        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
+						    ));
 
-					d($groupsW);
-					d($groupsT);
+							d($groupsW);
+							d($groupsT);
 
-					if (isset($groups['data']['uid'], $groups['data']['gid']))
-					{
-						echo '<div>';
-						echo 'User is in group <br/>';
-						echo '</div>';
-					}
+							if (isset($groups['data']['uid'], $groups['data']['gid']))
+							{
+								echo '<div>';
+								echo 'User is in group <br/>';
+								echo '</div>';
+							}
 
-					echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out URL</a></div>';
-				}
-				?>
+							echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out URL</a></div>';
+						}
+						?>
+				</div>
+			</div>
+			<div class="row">
+				<div class="span2">
+					<a href="about.php">About</a> | <a href="privacy.php">Privacy</a>
+				</div>
+			</div>
 		</div>
 	</div>
 
