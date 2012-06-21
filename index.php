@@ -36,22 +36,6 @@ if ($user_id) {
             exit();
         }
     }
-
-	// Wharton = 169174513170821
-	// Test = 330277880384395
-    $groups = $facebook->api(array(
-        'method' => 'fql.query',
-        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
-    ));
-
-	d($groups);
-	
-	if (isset($groups['data']['uid'], $groups['data']['gid']))
-	{
-		// Valid user
-		echo 'User is in group <br/>';
-	}
-
 }
 
 // $facebook->getLogoutUrl(array('next'=>'http://localhost/Dev/...'));
@@ -105,8 +89,27 @@ if ($user_id) {
 
 	<?php if(!isset($basic)) { ?>
     <div class="fb-login-button" data-scope="user_likes,user_photos"></div>
-	<?php } else { ?>
-	<div></div>
-	<?php }        ?>
+	<?php 
+		} 
+		else { 
+			// Wharton = 169174513170821
+			// Test = 330277880384395
+		    $groups = $facebook->api(array(
+		        'method' => 'fql.query',
+		        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
+		    ));
+
+			d($groups);
+
+			if (isset($groups['data']['uid'], $groups['data']['gid']))
+			{
+				echo '<div>';
+				echo 'User is in group <br/>';
+				echo '</div>';
+			}
+			
+			echo '<div>Log-out URL: ' . $facebook->getLogoutUrl(array('next'=>'http://localhost')) . '</div>';
+		}
+		?>
 </body>
 </html>
