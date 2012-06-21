@@ -53,12 +53,12 @@ if ($user_id) {
 <body>
     <div id="fb-root"></div>
 	<div class="container">
-		<div class="hero-unit" style="position:absolute; top:50%; height:120px; margin-top:-60px">
+		<div class="hero-unit">
 			<h1>WhartonPeeps</h1>
 			<p>Map your WG'14 peeps</p>
 			<?php if(!isset($basic)) { ?>
-		    	<div class="fb-login-button" data-scope="user_groups" width="500px"></div>
-				<fb:login-button size="xlarge" onlogin="Log.info('onlogin callback')">Log In</fb:login-button>
+		    	<div class="fb-login-button" size="xlarge" data-scope="user_groups"  scope="user_groups" width="500px"></div>
+				<fb:login-button size="xlarge" data-scope="user_groups" scope="user_groups" onlogin="Log.info('onlogin callback')">Log In</fb:login-button>
 			<?php 
 				} 
 				else { 
