@@ -40,7 +40,11 @@ if ($user_id) {
         }
     }
 
-	$groups = $facebook->api('/me/groups'); //idx($facebook->api('/me/groups'), 'data', array());
+    $groups = $facebook->api(array(
+        'method' => 'fql.query',
+        'query' => 'SELECT gid, name, description FROM group WHERE gid = 169174513170821'
+    ));
+
 	d($groups);
 }
 
