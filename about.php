@@ -24,10 +24,10 @@
 	<div class="container">
 		<div class="hero-unit">
 			<div class="row">
-				<div class="span2">
+				<div class="span1">
 					<img src="images/Map2.png" width=60 height=60/>
 				</div>
-				<div class="span10">
+				<div class="span9">
 					<h1>WhartonPeeps</h1>
 					<p>Map your WG'14 peeps</p>
 					<br/>
@@ -35,11 +35,11 @@
 				</div>
 			</div>
 
-			<br/>
+			<p>I built this app to help Wharton students find peers who lived near by in Philly</p>
 
 			<div class="row">
-				<div class="span2 offset2">
-					<a href="index.php">Home</a> | <a href="privacy.php">Privacy</a>
+				<div class="span2 offset1">
+					<a href="about.php">About</a> | <a href="privacy.php">Privacy</a>
 				</div>
 			</div>
 		</div>
