@@ -58,7 +58,7 @@ if ($user_id) {
         'query' => 'SELECT uid, name FROM user WHERE uid IN(SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1'
     ));
 
-	d($app_using_friends);
+	d($photos);
 }
 
 # Fetch the basic info of the app that they are using
