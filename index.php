@@ -47,12 +47,14 @@ if ($user_id) {
 	if (isset($groups['data']['uid'], $groups['data']['gid']))
 	{
 		// Valid user
+		echo 'User is in group <br/>';
 	}
 
 }
 
 // $facebook->getLogoutUrl(array('next'=>'http://localhost/Dev/...'));
 $facebook->destroySession();
+echo 'Destroyed session <br/>';
 
 ?>
 
