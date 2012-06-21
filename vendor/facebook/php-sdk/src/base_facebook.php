@@ -849,6 +849,9 @@ abstract class BaseFacebook
    * @return string The response text
    */
   protected function makeRequest($url, $params, $ch=null) {
+	
+	error_log("Trying to get " . $url);
+	
     if (!$ch) {
       $ch = curl_init();
     }
