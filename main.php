@@ -28,7 +28,7 @@ $facebook = new Facebook(array(
     <head>
 		<title>WhartonPeeps</title>
 		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+		<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
 		<script type="text/javascript" src="javascript/gmaps.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
