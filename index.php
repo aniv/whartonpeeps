@@ -108,7 +108,7 @@ if ($user_id) {
 				echo '</div>';
 			}
 			
-			echo '<div>Log-out URL: ' . $facebook->getLogoutUrl(array('next'=>'http://localhost')) . '</div>';
+			echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out URL</a></div>';
 		}
 		?>
 </body>
