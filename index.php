@@ -4,6 +4,8 @@
 # Defined in 'AppInfo.php'
 require_once 'AppInfo.php';
 require_once 'kint/Kint.class.php';
+require_once 'utils.php';
+require_once 'sdk/src/facebook.php';
 
 # Stop making excess function calls
 $app_id = AppInfo::appID();
@@ -15,10 +17,6 @@ if (substr($app_url, 0, 8) != 'https://' && $_SERVER['REMOTE_ADDR'] != '127.0.0.
     exit();
 }
 
-# This provides access to helper functions defined in 'utils.php'
-require_once 'utils.php';
-require_once 'sdk/src/facebook.php';
-
 $facebook = new Facebook(array(
     'appId'  => $app_id,
     'secret' => AppInfo::appSecret(),
@@ -27,7 +25,6 @@ $facebook = new Facebook(array(
 $user_id = $facebook->getUser();
 
 if ($user_id) {
-
     try {
         # Fetch the viewer's basic information
         $basic = $facebook->api('/me');
@@ -40,19 +37,22 @@ if ($user_id) {
         }
     }
 
+	// Wharton = 169174513170821
+	// Test = 330277880384395
     $groups = $facebook->api(array(
         'method' => 'fql.query',
         'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
     ));
 
-	d($groups);
+	if (isset($groups['data']['uid'], $groups['data']['gid']))
+	{
+		// Valid user
+	}
+
 }
 
-# Fetch the basic info of the app that they are using
-$app_info = $facebook->api('/'. AppInfo::appID());
-$app_name = he(idx($app_info, 'name', ''));
-
-$he_user_id = he($user_id);
+// $facebook->getLogoutUrl(array('next'=>'http://localhost/Dev/...'));
+$facebook->destroySession();
 
 ?>
 
