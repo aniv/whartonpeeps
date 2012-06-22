@@ -63,43 +63,98 @@ $facebook = new Facebook(array(
 		<div id="fullScreenMap" class="span12"></div>
 		<script type="text/javascript">
 	
-			var map;
-			var markers = [];
+			window.map = null;
+			window.viewMarkers = [];
+			window.modelMarkers = [];
 			var r;
 	
-			function clickHandler(e)
-			{
-				console.log("clicked");
-			}
+			// function clickHandler(e)
+			// {
+			// 	console.log("clicked");
+			// }
+			// 
+			// function rightClickHandler(e)
+			// {
+			// 	console.log("right clicked");
+			// 	console.log("latitude: " + e.latLng.lat() + " and long: " + e.latLng.lng());
+			// 	
+			// 	overlayIndex = overlays.length;
+			// 
+			// 	o = map.drawOverlay({
+			// 		lat: e.latLng.lat(),
+			// 		lng: e.latLng.lng(),
+			// 		content: "<div>New place here? " + overlayIndex + "</div>"
+			// 	});
+			// 	
+			// 	overlays.push(o);
+			// }
 			
-			function rightClickHandler(e)
+			function refreshMarkers()
 			{
-				console.log("right clicked");
-				console.log("latitude: " + e.latLng.lat() + " and long: " + e.latLng.lng());
-				
-				overlayIndex = overlays.length;
+				console.log("refresh markers called");
+				currentBounds = window.map.map.getBounds();
 
-				o = map.drawOverlay({
-					lat: e.latLng.lat(),
-					lng: e.latLng.lng(),
-					content: "<div>New place here? " + overlayIndex + "</div>"
+				$.ajax({
+					type: "GET",
+					url: "fetch.php",
+					data: { 
+						action: "refreshMarkers",
+						ne_lat: currentBounds.getNorthEast().lat(), 
+						ne_lng: currentBounds.getNorthEast().lng(), 
+						sw_lat: currentBounds.getSouthWest().lat(), 
+						sw_lng: currentBounds.getSouthWest().lng()
+					},
+				}).done(function(msg){
+					console.log("Requesting fresh markers");
+					console.log("Server response: " + msg);
+					markers = $.parseJSON(msg);
+					
+					window.modelMarkers = []; // reset model markers
+					
+					for(i in markers)
+					{
+						marker = markers[i];
+						
+						// rebuild the view just for the model markers (view markers are left as is)
+						window.map.addMarker({
+							lat: marker.lat_lng[0],
+							lng: marker.lat_lng[1],
+							title: marker.place_short,
+							//click: markerClickHandler,
+							infoWindow : {
+								content: exisitingMarkerInfoWindowMarkup(marker.place_short, marker.place_long, marker.people)
+							}
+						});
+
+						// rebuild the model markers
+						window.modelMarkers.push(marker);
+					}
 				});
-				
-				overlays.push(o);
 			}
 			
-			// TODO:
-			function addLocationToDB(latlng, address)
+			function addLocationToDB(fullAdd, shortAdd, lat, lng)
 			{
-				return true;
+				$.ajax({
+					type: "POST",
+					url: "save.php",
+					data: { 
+						action: "newPlaceAndUser",
+						fullAddress: fullAdd, 
+						shortAddress: shortAdd, 
+						lat: lat, 
+						lng: lng,
+						fbUserId: null
+					},
+				}).done(function(msg){
+					console.log("Data sent to server");
+					console.log("Server response: " + msg);
+				});
 			}
 			
-			// TODO: This will have to be modified depending on whether or not a place already exists in the DB
-			function addMarkerConfirmationInfoWinMarkup(latlng, fullAddress, shortAddress, markerNum)
+			function newMarkerInfoWindowMarkup(latlng, fullAddress, shortAddress, markerNum)
 			{
 				return "<div>" +
-					   "Congrats! You're the first Wharton peep to list at <br/>\"" + shortAddress + "\" <br/> Add as a new place? ["+markerNum+"]<br/>" +
-					   //"<form method='post' action='post.php' class='form-inline'>" +
+					   "Congrats! You're the first Wharton peep to list at <br/>\"" + fullAddress + "\" <br/> Add as a new place? ["+markerNum+"]<br/>" +
 					   "<button class='btn btn-small btn-success' type='submit' id='yesMarker'>Yes</button>" +
 					   "<button class='btn btn-small' type='submit' id='noMarker'>No</button>" +
 					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
@@ -107,70 +162,81 @@ $facebook = new Facebook(array(
 					   "<input type='hidden' id='shortAddress' name='shortAddress' value='"+ shortAddress +"'/>" +
 					   "<input type='hidden' id='lat' name='lat' value='"+ latlng.lat() +"'/>" +
 					   "<input type='hidden' id='lng' name='lng' value='"+ latlng.lng() +"'/>" +
-					   //"</form>"+
 					   "</div>";
 			}
 		
-			function addMarker(lat, long, title, markerClickHandler, infoWindowContent)
+			function exisitingMarkerInfoWindowMarkup(shortAddress, fullAddress, people)
 			{
-				map.addMarker({
-					lat: lat,
-					lng: long,
-					title: title,
-					click: markerClickHandler,
-					infoWindow : {
-						content: infoWindowContent
-					}
-				});
+				var peopleList = "";
+				for(p in people)
+					peopleList += p;
+					
+				return "<div>" +
+					   "Wharton peeps at \"" + shortAddress + "\" <br/>" +
+					   peopleList +
+					   "</div>";
 			}
+			
+			// function addMarker(lat, long, title, markerClickHandler, infoWindowContent)
+			// {
+			// 	map.addMarker({
+			// 		lat: lat,
+			// 		lng: long,
+			// 		title: title,
+			// 		click: markerClickHandler,
+			// 		infoWindow : {
+			// 			content: infoWindowContent
+			// 		}
+			// 	});
+			// }
 	
 			$(document).ready(function(){
 				
-				map = new GMaps({
+				window.map = new GMaps({
 					div: '#fullScreenMap',
 					lat: 39.949457,
 					lng: -75.171998,
 					zoom: 16,
 					height: ($(window).height()-46)+'px',
-					click: clickHandler
+					idle: refreshMarkers
+					
+					// bounds_changed: refreshMarkers,
+					// click: clickHandler
 					//rightclick: rightClickHandler
 				});
 				
+				//
+				// TODO: Query place database and see if it already exists instead of geocoding again
+				//
+
 				$('#addressForm').submit(function(e){
 					e.preventDefault();
 					GMaps.geocode({
 						address: $('#address').val().trim(),
 						callback: function(results, status) {
 							if (status == "OK") {
-								console.log(results);
-								r = results;
+								// console.log(results);
 								
 								var latlng = results[0].geometry.location;
 								var fullAddress = results[0].formatted_address;
 								var shortAddress = results[0].formatted_address.split(',')[0];
-								map.setCenter(latlng.lat(), latlng.lng());
+								window.map.setCenter(latlng.lat(), latlng.lng());
 								
-								//
-								// TODO: Query place database and see if it already exists
-								//
-
-								markerNum = markers.length;
+								markerNum = window.viewMarkers.length;
 								
-								m = map.addMarker({
+								m = window.map.addMarker({
 									lat: latlng.lat(),
 									lng: latlng.lng(),
 									infoWindow: {
-										content: addMarkerConfirmationInfoWinMarkup(latlng, fullAddress, shortAddress, markerNum)
+										content: newMarkerInfoWindowMarkup(latlng, fullAddress, shortAddress, markerNum)
 									}
 								});
 
-								markers.push(m);  // add to 'model'
-
-								// Trigger auto pop-up
-								google.maps.event.trigger(m, 'click');
+								window.viewMarkers.push(m);  // add to view markers; may or may not be destroyed via prompt
+								google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
 							}
 						}
-					})
+					});
 				});
 				
 				$('#address').val('2110 Spruce St philly pa');
@@ -184,33 +250,24 @@ $facebook = new Facebook(array(
 					shortAdd = $('#shortAddress').val();
 					lat = $('#lat').val();
 					lng = $('#lng').val();
+					addLocationToDB(fullAdd, shortAdd, lat, lng);
 					
-					$.ajax({
-						type: "POST",
-						url: "post.php",
-						data: { 
-							action: "newPlaceAndUser",
-							fullAddress: fullAdd, 
-							shortAddress: shortAdd, 
-							lat: lat, 
-							lng: lng,
-							fbUserId: null
-						},
-					}).done(function(msg){
-						console.log("Data sent to server");
-						console.log("Server response: " + msg);
-					});
+					// Pop it out of the viewMarkers
+					window.viewMarkers.splice(markerNum,1);
 					
-					marker = markers[markerNum];  // get marker
-					marker.infoWindow.close();    // already added to model, just dimiss the infoWindow
+					// Force a refresh to get it into the modelMarkers
+					refreshMarkers();
+					
+					// marker = window.markers[markerNum];  // get marker
+					marker.infoWindow.close();    // already added to client model, just dimiss the infoWindow
 				});
 
 				$('#fullScreenMap').on('click','#noMarker',function(e){
 					markerNum = $('#markerNum').val();
 					console.log("no clicked: " + markerNum);
 					
-					marker = markers[markerNum];  // get marker
-					markers.splice(markerNum,1);  // remove from 'model'
+					marker = window.viewMarkers[markerNum];  // get marker
+					window.viewMarkers.splice(markerNum,1);  // remove from client model
 					marker.setMap(null);		  // remove from view
 				});
 			});
