@@ -49,11 +49,14 @@ $facebook = new Facebook(array(
 	</head>
 <body>
 	<div class="container-fluid">
-	<div class="row-fluid">
-		<form method="post" class="form-inline">
-			<input type="text" class="span6" placeholder="Your address">
-			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Add it!</button>
+	<div class="row-fluid" style="margin-top:12px;margin-bottom:-6px">
+		<form method="post" class="form-inline span5" id="addressForm">
+			<input type="text" class="span6" placeholder="Your address" id="address">
+			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 		</form>
+		<div id="infoBox" class="span5 alert alert-info">
+			Start by searching for your address
+		</div>
 	</div>
 	
 	<div class="row-fluid">
@@ -61,7 +64,7 @@ $facebook = new Facebook(array(
 		<script type="text/javascript">
 	
 			var map;
-			var overlays = [];
+			var markers = [];
 	
 			function clickHandler(e)
 			{
@@ -83,6 +86,23 @@ $facebook = new Facebook(array(
 				
 				overlays.push(o);
 			}
+			
+			// TODO:
+			function addLocationToDB(latlng, address)
+			{
+				return true;
+			}
+			
+			// TODO: This will have to be modified depending on whether or not a place already exists in the DB
+			function addMarkerConfirmationInfoWinMarkup(latlng, address, markerNum)
+			{
+				return "<div>" +
+					   "Congrats! You're the first Wharton peep to list at <br/>\"" + address + "\" <br/> Add as a new place? ["+markerNum+"]" +
+					   "<br/><button class='btn btn-small btn-success' type='submit' id='yesMarker'>Yes</button>" +
+					   "<button class='btn btn-small' type='submit' id='noMarker'>No</button>" +
+					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>"
+					   "</div>";
+			}
 		
 			function addMarker(lat, long, title, markerClickHandler, infoWindowContent)
 			{
@@ -98,6 +118,7 @@ $facebook = new Facebook(array(
 			}
 	
 			$(document).ready(function(){
+				
 				map = new GMaps({
 					div: '#fullScreenMap',
 					lat: 39.949457,
@@ -105,7 +126,60 @@ $facebook = new Facebook(array(
 					height: ($(window).height()-46)+'px',
 					click: clickHandler
 					//rightclick: rightClickHandler
-				})
+				});
+				
+				$('#addressForm').submit(function(e){
+					e.preventDefault();
+					GMaps.geocode({
+						address: $('#address').val().trim(),
+						callback: function(results, status) {
+							if (status == "OK") {
+								console.log(results);
+								var latlng = results[0].geometry.location;
+								var cleanAddress = results[0].formatted_address;
+								map.setCenter(latlng.lat(), latlng.lng());
+								
+								//
+								// TODO: Query place database and see if it already exists
+								//
+
+								markerNum = markers.length;
+								
+								m = map.addMarker({
+									lat: latlng.lat(),
+									lng: latlng.lng(),
+									infoWindow: {
+										content: addMarkerConfirmationInfoWinMarkup(latlng, cleanAddress, markerNum)
+									}
+								});
+
+								markers.push(m);  // add to 'model'
+
+								// Trigger auto pop-up
+								google.maps.event.trigger(m, 'click');
+							}
+						}
+					})
+				});
+				
+				$('#address').val('2110 Spruce St philly pa');
+				
+				$('#fullScreenMap').on('click','#yesMarker',function(e){
+					markerNum = $('#markerNum').val();
+					console.log("yes clicked: " + markerNum);
+					
+					marker = markers[markerNum];  // get marker
+					marker.infoWindow.close();    // already added to model, just dimiss the infoWindow
+				});
+
+				$('#fullScreenMap').on('click','#noMarker',function(e){
+					markerNum = $('#markerNum').val();
+					console.log("no clicked: " + markerNum);
+					
+					marker = markers[markerNum];  // get marker
+					markers.splice(markerNum,1);  // remove from 'model'
+					marker.setMap(null);		  // remove from view
+				});
 			});
 		</script>
 	</div>
