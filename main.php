@@ -28,7 +28,7 @@ $facebook = new Facebook(array(
     <head>
 		<title>WhartonPeeps</title>
 		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
 		<script type="text/javascript" src="javascript/gmaps.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
@@ -50,11 +50,11 @@ $facebook = new Facebook(array(
 <body>
 	<div class="container-fluid">
 	<div class="row-fluid" style="margin-top:12px;margin-bottom:-6px">
-		<div id="infoBox" class="span2 alert alert-info">
-			Start by searching for your address
+		<div id="infoBox" class="span3 alert alert-info" style="padding-right:14px">
+			Start by searching for your address in the box:
 		</div>
 		<form method="post" class="form-inline span5" id="addressForm" style="margin-top:4px">
-			<input type="text" class="span6" placeholder="Your address" id="address">
+			<input type="text" class="span6" placeholder="Your address" id="addressBox">
 			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 		</form>
 	</div>
@@ -66,7 +66,7 @@ $facebook = new Facebook(array(
 			window.map = null;
 			window.viewMarkers = [];
 			window.modelMarkers = [];
-			var r;
+			// var r;
 	
 			// function clickHandler(e)
 			// {
@@ -192,6 +192,7 @@ $facebook = new Facebook(array(
 	
 			$(document).ready(function(){
 				
+				// Main map config
 				window.map = new GMaps({
 					div: '#fullScreenMap',
 					lat: 39.949457,
@@ -199,20 +200,23 @@ $facebook = new Facebook(array(
 					zoom: 16,
 					height: ($(window).height()-46)+'px',
 					idle: refreshMarkers
-					
-					// bounds_changed: refreshMarkers,
-					// click: clickHandler
-					//rightclick: rightClickHandler
 				});
 				
-				//
-				// TODO: Query place database and see if it already exists instead of geocoding again
-				//
-
+				// Address autocomplete config
+				var input = document.getElementById('addressBox');
+				var options = {
+				  bounds: window.map.map.getBounds(),
+				  types: ['geocode']
+				};
+				autocomplete = new google.maps.places.Autocomplete(input, options);
+				autocomplete.bindTo('bounds', window.map.map);
+				autocomplete.setBounds(window.map.map.getBounds());
+				
+				// Address submit handler
 				$('#addressForm').submit(function(e){
 					e.preventDefault();
 					GMaps.geocode({
-						address: $('#address').val().trim(),
+						address: $('#addressBox').val().trim(),  // ($('#addressBox').val() == "" ? : $('#addressBox').val().trim()),
 						callback: function(results, status) {
 							if (status == "OK") {
 								// console.log(results);
@@ -239,8 +243,10 @@ $facebook = new Facebook(array(
 					});
 				});
 				
+				// Address default value
 				$('#address').val('2110 Spruce St philly pa');
 				
+				// Marker confirmation - Yes handler
 				$('#fullScreenMap').on('click','#yesMarker',function(e){
 					markerNum = $('#markerNum').val();
 					console.log("yes clicked: " + markerNum);
@@ -262,6 +268,7 @@ $facebook = new Facebook(array(
 					marker.infoWindow.close();    // already added to client model, just dimiss the infoWindow
 				});
 
+				// Marker confirmation - No handler
 				$('#fullScreenMap').on('click','#noMarker',function(e){
 					markerNum = $('#markerNum').val();
 					console.log("no clicked: " + markerNum);
