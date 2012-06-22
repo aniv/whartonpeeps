@@ -50,13 +50,13 @@ $facebook = new Facebook(array(
 <body>
 	<div class="container-fluid">
 	<div class="row-fluid" style="margin-top:12px;margin-bottom:-6px">
-		<form method="post" class="form-inline span5" id="addressForm">
+		<div id="infoBox" class="span2 alert alert-info">
+			Start by searching for your address
+		</div>
+		<form method="post" class="form-inline span5" id="addressForm" style="margin-top:4px">
 			<input type="text" class="span6" placeholder="Your address" id="address">
 			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 		</form>
-		<div id="infoBox" class="span5 alert alert-info">
-			Start by searching for your address
-		</div>
 	</div>
 	
 	<div class="row-fluid">
@@ -65,6 +65,7 @@ $facebook = new Facebook(array(
 	
 			var map;
 			var markers = [];
+			var r;
 	
 			function clickHandler(e)
 			{
@@ -94,13 +95,19 @@ $facebook = new Facebook(array(
 			}
 			
 			// TODO: This will have to be modified depending on whether or not a place already exists in the DB
-			function addMarkerConfirmationInfoWinMarkup(latlng, address, markerNum)
+			function addMarkerConfirmationInfoWinMarkup(latlng, fullAddress, shortAddress, markerNum)
 			{
 				return "<div>" +
-					   "Congrats! You're the first Wharton peep to list at <br/>\"" + address + "\" <br/> Add as a new place? ["+markerNum+"]" +
-					   "<br/><button class='btn btn-small btn-success' type='submit' id='yesMarker'>Yes</button>" +
+					   "Congrats! You're the first Wharton peep to list at <br/>\"" + shortAddress + "\" <br/> Add as a new place? ["+markerNum+"]<br/>" +
+					   //"<form method='post' action='post.php' class='form-inline'>" +
+					   "<button class='btn btn-small btn-success' type='submit' id='yesMarker'>Yes</button>" +
 					   "<button class='btn btn-small' type='submit' id='noMarker'>No</button>" +
-					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>"
+					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
+					   "<input type='hidden' id='fullAddress' name='fullAddress' value='"+ fullAddress +"'/>" +
+					   "<input type='hidden' id='shortAddress' name='shortAddress' value='"+ shortAddress +"'/>" +
+					   "<input type='hidden' id='lat' name='lat' value='"+ latlng.lat() +"'/>" +
+					   "<input type='hidden' id='lng' name='lng' value='"+ latlng.lng() +"'/>" +
+					   //"</form>"+
 					   "</div>";
 			}
 		
@@ -123,6 +130,7 @@ $facebook = new Facebook(array(
 					div: '#fullScreenMap',
 					lat: 39.949457,
 					lng: -75.171998,
+					zoom: 16,
 					height: ($(window).height()-46)+'px',
 					click: clickHandler
 					//rightclick: rightClickHandler
@@ -135,8 +143,11 @@ $facebook = new Facebook(array(
 						callback: function(results, status) {
 							if (status == "OK") {
 								console.log(results);
+								r = results;
+								
 								var latlng = results[0].geometry.location;
-								var cleanAddress = results[0].formatted_address;
+								var fullAddress = results[0].formatted_address;
+								var shortAddress = results[0].formatted_address.split(',')[0];
 								map.setCenter(latlng.lat(), latlng.lng());
 								
 								//
@@ -149,7 +160,7 @@ $facebook = new Facebook(array(
 									lat: latlng.lat(),
 									lng: latlng.lng(),
 									infoWindow: {
-										content: addMarkerConfirmationInfoWinMarkup(latlng, cleanAddress, markerNum)
+										content: addMarkerConfirmationInfoWinMarkup(latlng, fullAddress, shortAddress, markerNum)
 									}
 								});
 
@@ -167,6 +178,28 @@ $facebook = new Facebook(array(
 				$('#fullScreenMap').on('click','#yesMarker',function(e){
 					markerNum = $('#markerNum').val();
 					console.log("yes clicked: " + markerNum);
+					
+					// persist to db
+					fullAdd = $('#fullAddress').val();
+					shortAdd = $('#shortAddress').val();
+					lat = $('#lat').val();
+					lng = $('#lng').val();
+					
+					$.ajax({
+						type: "POST",
+						url: "post.php",
+						data: { 
+							action: "newPlaceAndUser",
+							fullAddress: fullAdd, 
+							shortAddress: shortAdd, 
+							lat: lat, 
+							lng: lng,
+							fbUserId: null
+						},
+					}).done(function(msg){
+						console.log("Data sent to server");
+						console.log("Server response: " + msg);
+					});
 					
 					marker = markers[markerNum];  // get marker
 					marker.infoWindow.close();    // already added to model, just dimiss the infoWindow
