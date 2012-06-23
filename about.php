@@ -36,6 +36,7 @@
 			</div>
 
 			<p>I built this app to help Wharton students find peers who lived near by in Philly</p>
+			<p>Powered with Gmap.js, Mumurhash, Bootstrap, jQuery, Facebook PHP SDK and PHPFog </p>
 
 			<div class="row">
 				<div class="span2 offset1">

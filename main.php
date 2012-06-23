@@ -28,7 +28,8 @@ $facebook = new Facebook(array(
     <head>
 		<title>WhartonPeeps</title>
 		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
+		<script type="text/javascript" src="javascript/murmurhash-3.min.js"></script>		
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
 		<script type="text/javascript" src="javascript/gmaps.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
@@ -51,10 +52,10 @@ $facebook = new Facebook(array(
 	<div class="container-fluid">
 	<div class="row-fluid" style="margin-top:12px;margin-bottom:-6px">
 		<div id="infoBox" class="span3 alert alert-info" style="padding-right:14px">
-			Start by searching for your address in the box:
+			<b>Start here!</b> Search for your address in the box:
 		</div>
 		<form method="post" class="form-inline span5" id="addressForm" style="margin-top:4px">
-			<input type="text" class="span6" placeholder="Your address" id="addressBox">
+			<input type="text" class="span6" placeholder="Enter your address here" id="addressBox">
 			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 		</form>
 	</div>
@@ -64,30 +65,9 @@ $facebook = new Facebook(array(
 		<script type="text/javascript">
 	
 			window.map = null;
-			window.viewMarkers = [];
-			window.modelMarkers = [];
-			// var r;
-	
-			// function clickHandler(e)
-			// {
-			// 	console.log("clicked");
-			// }
-			// 
-			// function rightClickHandler(e)
-			// {
-			// 	console.log("right clicked");
-			// 	console.log("latitude: " + e.latLng.lat() + " and long: " + e.latLng.lng());
-			// 	
-			// 	overlayIndex = overlays.length;
-			// 
-			// 	o = map.drawOverlay({
-			// 		lat: e.latLng.lat(),
-			// 		lng: e.latLng.lng(),
-			// 		content: "<div>New place here? " + overlayIndex + "</div>"
-			// 	});
-			// 	
-			// 	overlays.push(o);
-			// }
+			window.viewMarkers = {};
+			window.modelMarkers = {};
+			//window.modelMarkers = [];
 			
 			function refreshMarkers()
 			{
@@ -107,29 +87,47 @@ $facebook = new Facebook(array(
 				}).done(function(msg){
 					console.log("Requesting fresh markers");
 					console.log("Server response: " + msg);
-					markers = $.parseJSON(msg);
-					
-					window.modelMarkers = []; // reset model markers
-					
-					for(i in markers)
-					{
-						marker = markers[i];
-						
-						// rebuild the view just for the model markers (view markers are left as is)
-						window.map.addMarker({
-							lat: marker.lat_lng[0],
-							lng: marker.lat_lng[1],
-							title: marker.place_short,
-							//click: markerClickHandler,
-							infoWindow : {
-								content: exisitingMarkerInfoWindowMarkup(marker.place_short, marker.place_long, marker.people)
-							}
-						});
-
-						// rebuild the model markers
-						window.modelMarkers.push(marker);
-					}
+					refreshMarkersHandler($.parseJSON(msg));
 				});
+			}
+			
+			function refreshMarkersHandler(markersInCurrentBounds)
+			{
+				window.modelMarkers = {}; // reset model markers
+				//window.modelMarkers = []; // reset model markers
+				dirtyViewMarkers = $.map(window.viewMarkers, function(vm,i){ if (vm.dirty) return [[vm.position.lat(), vm.position.lng(), i]];} );
+				
+				for(i in markersInCurrentBounds)
+				{
+					mm = markersInCurrentBounds[i];
+					
+					// rebuild the view just for the model markers (view markers are left as is)
+					window.map.addMarker({
+						lat: mm.lat_lng[0],
+						lng: mm.lat_lng[1],
+						title: mm.place_short,
+						infoWindow : {
+							content: existingMarkerInfoWindowMarkup(mm.place_short, mm.place_long, mm.people, i, "")
+						}
+					});
+
+					// rebuild the model markers
+					// over time, modelMarkers will hold all markers that were ever requested from db
+					markerNum = murmurhash3_32_gc(mm.place_long,Math.floor(Math.random()*1e6)).toString();
+					window.modelMarkers[markerNum] = mm;
+					// window.modelMarkers.push(mm);
+					mm.markerNum = markerNum;
+					
+					// compare against view markers to see if dirty flag needs updating
+					for(j in dirtyViewMarkers)
+						//if (dirtyViewMarkers[j][0] == mm.lat_lng[0] && dirtyViewMarkers[j][1] == mm.lat_lng[1])
+						if (dirtyViewMarkers[j][2] == mm.markerNum)
+						{
+							k = dirtyViewMarkers[j][2];  // we stored in the index in the tuple
+							window.viewMarkers[k].dirty = false;  // kind redundant huh?
+							delete window.viewMarkers[k];
+						}
+				}
 			}
 			
 			function addLocationToDB(fullAdd, shortAdd, lat, lng)
@@ -151,6 +149,106 @@ $facebook = new Facebook(array(
 				});
 			}
 			
+			function getMarkerForAddress(fullAdd, shortAdd, latlng)
+			{
+				$.ajax({
+					type: "GET",
+					url: "fetch.php",
+					data: {
+						action: "markerForAddress",
+						fullAddress: fullAdd,
+						lat: latlng.lat(),
+						lng: latlng.lng()
+					}
+				}).done(function(msg){
+					getMarkerForAddressHandler($.parseJSON(msg), fullAdd, shortAdd, latlng);
+				});
+			}
+			
+			function getMarkerForAddressHandler(dbMarkers, fullAddress, shortAddress, latlng)
+			{
+				// Triggered when Marker found in DB
+				// there are two options at this point
+				//   option 1. marker is not in current view - we'll need to add it in
+				//   option 2. marker is in current view - we need to surface it visually
+				// we start by searching for it in modelMarkers and the map's markers
+				if (dbMarkers.length > 0)
+				{
+					dbMarker = dbMarkers[0];
+					
+					// find it: look up it up the window.modelMarkers first, and then in the window.map.markers
+					mmIndex = null;
+					//$.inArray(dbMarker.place_long, $.map(window.modelMarkers, function(v,i) { return v.place_long; }) );
+					for (i in window.modelMarkers)
+					{
+						if (window.modelMarkers[i].place_long == dbMarker.place_long)
+						{
+							mmIndex = i;
+							break;
+						}
+					}
+					
+					mkCoords = $.map(window.map.markers, function(v,i) { return [[v.position.lat(), v.position.lng()]]; });
+					mkIndex = -1;
+					for(k in mkCoords)
+					{
+						if (window.modelMarkers[mmIndex].lat_lng[0] == mkCoords[k][0] && 
+							window.modelMarkers[mmIndex].lat_lng[1] == mkCoords[k][1])
+						{
+							mkIndex = k;
+							break;
+						}
+					}
+					
+					// option 1. marker is in view somewhere
+					if (mkIndex > 0)
+					{
+						m = window.map.markers[mkIndex];
+						google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
+					}
+					// option 2. marker is not in view, so we add it in
+					else
+					{
+						markerNum = murmurhash3_32_gc(fullAddress,Math.floor(Math.random()*1e6)).toString();
+						m = window.map.addMarker({
+							lat: latlng.lat(),
+							lng: latlng.lng(),
+							infoWindow: {
+								content: existingMarkerInfoWindowMarkup(dbMarker.place_long, dbMarker.place_short, dbMarker.people, markerNum, " ")
+							}
+						});
+						window.viewMarkers[markerNum] = m;  // add to view markers; may or may not be destroyed via prompt
+						google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
+					}
+					$("#infoBox").html("<b>Great news!</b> Wharton peeps at that address");
+					$("#infoBox").addClass("alert-success").removeClass("alert-info");
+					
+				}
+				// marker not found in db
+				else
+				{
+					// option 1. marker needs to be added to view
+					$("#infoBox").html("<b>Cool!</b> That's a new address for WhartonPeeps");
+					$("#infoBox").addClass("alert-success").removeClass("alert-info");
+
+					markerNum = murmurhash3_32_gc(fullAddress,Math.floor(Math.random()*1e6)).toString();
+				
+					m = window.map.addMarker({
+						lat: latlng.lat(),
+						lng: latlng.lng(),
+						infoWindow: {
+							content: newMarkerInfoWindowMarkup(latlng, fullAddress, shortAddress, markerNum)
+						}
+					});
+
+					window.viewMarkers[markerNum] = m;  // add to view markers; may or may not be destroyed via prompt
+					google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
+				}
+				
+				// TODO: do we even need this?
+				// window.map.setCenter(latlng.lat(), latlng.lng());
+			}
+			
 			function newMarkerInfoWindowMarkup(latlng, fullAddress, shortAddress, markerNum)
 			{
 				return "<div>" +
@@ -165,7 +263,7 @@ $facebook = new Facebook(array(
 					   "</div>";
 			}
 		
-			function exisitingMarkerInfoWindowMarkup(shortAddress, fullAddress, people)
+			function existingMarkerInfoWindowMarkup(shortAddress, fullAddress, people, markerNum, extra)
 			{
 				var peopleList = "";
 				for(p in people)
@@ -173,22 +271,10 @@ $facebook = new Facebook(array(
 					
 				return "<div>" +
 					   "Wharton peeps at \"" + shortAddress + "\" <br/>" +
-					   peopleList +
+					   peopleList + extra +
+					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
 					   "</div>";
 			}
-			
-			// function addMarker(lat, long, title, markerClickHandler, infoWindowContent)
-			// {
-			// 	map.addMarker({
-			// 		lat: lat,
-			// 		lng: long,
-			// 		title: title,
-			// 		click: markerClickHandler,
-			// 		infoWindow : {
-			// 			content: infoWindowContent
-			// 		}
-			// 	});
-			// }
 	
 			$(document).ready(function(){
 				
@@ -198,7 +284,7 @@ $facebook = new Facebook(array(
 					lat: 39.949457,
 					lng: -75.171998,
 					zoom: 16,
-					height: ($(window).height()-46)+'px',
+					height: ($(window).height()-46-12-25)+'px',
 					idle: refreshMarkers
 				});
 				
@@ -215,29 +301,18 @@ $facebook = new Facebook(array(
 				// Address submit handler
 				$('#addressForm').submit(function(e){
 					e.preventDefault();
+					
 					GMaps.geocode({
 						address: $('#addressBox').val().trim(),  // ($('#addressBox').val() == "" ? : $('#addressBox').val().trim()),
 						callback: function(results, status) {
-							if (status == "OK") {
-								// console.log(results);
-								
+							if (status == "OK")  // geocoding successful
+							{   
 								var latlng = results[0].geometry.location;
 								var fullAddress = results[0].formatted_address;
 								var shortAddress = results[0].formatted_address.split(',')[0];
-								window.map.setCenter(latlng.lat(), latlng.lng());
-								
-								markerNum = window.viewMarkers.length;
-								
-								m = window.map.addMarker({
-									lat: latlng.lat(),
-									lng: latlng.lng(),
-									infoWindow: {
-										content: newMarkerInfoWindowMarkup(latlng, fullAddress, shortAddress, markerNum)
-									}
-								});
 
-								window.viewMarkers.push(m);  // add to view markers; may or may not be destroyed via prompt
-								google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
+								// check to see if in db
+								getMarkerForAddress(fullAddress, shortAddress, latlng);
 							}
 						}
 					});
@@ -248,34 +323,40 @@ $facebook = new Facebook(array(
 				
 				// Marker confirmation - Yes handler
 				$('#fullScreenMap').on('click','#yesMarker',function(e){
-					markerNum = $('#markerNum').val();
+					markerNum = $('#markerNum').val().toString();
 					console.log("yes clicked: " + markerNum);
 					
-					// persist to db
+					// Persist to db
 					fullAdd = $('#fullAddress').val();
 					shortAdd = $('#shortAddress').val();
 					lat = $('#lat').val();
 					lng = $('#lng').val();
 					addLocationToDB(fullAdd, shortAdd, lat, lng);
 					
+					// Dismiss info window
+					marker = window.viewMarkers[markerNum];
+					window.viewMarkers[markerNum].infoWindow.content = existingMarkerInfoWindowMarkup(shortAdd, fullAdd, [0], markerNum, " dirty ");
+					window.viewMarkers[markerNum].infoWindow.close();
+					window.viewMarkers[markerNum].dirty = true;  // set dirty flag
+					
+					// Remove from view (will be added back in during refreshMarkers())
+					// marker.setMap(null);
+
 					// Pop it out of the viewMarkers
-					window.viewMarkers.splice(markerNum,1);
+					// window.viewMarkers.splice(markerNum,1);
 					
-					// Force a refresh to get it into the modelMarkers
+					// Force a refresh
 					refreshMarkers();
-					
-					// marker = window.markers[markerNum];  // get marker
-					marker.infoWindow.close();    // already added to client model, just dimiss the infoWindow
 				});
 
 				// Marker confirmation - No handler
 				$('#fullScreenMap').on('click','#noMarker',function(e){
-					markerNum = $('#markerNum').val();
+					markerNum = $('#markerNum').val().toString();
 					console.log("no clicked: " + markerNum);
 					
 					marker = window.viewMarkers[markerNum];  // get marker
-					window.viewMarkers.splice(markerNum,1);  // remove from client model
 					marker.setMap(null);		  // remove from view
+					delete window.viewMarkers[markerNum];  // remove from client model
 				});
 			});
 		</script>

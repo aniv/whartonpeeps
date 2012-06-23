@@ -36,8 +36,25 @@
 		
 		$markers = array();
 		foreach($c as $doc)
-			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "people"=>$doc['people']));
+			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$doc['people']));
 			
+		echo json_encode($markers);
+	}
+	
+	function GetPlaceForAddress($fullAdd, $lat, $lng)
+	{
+		$db = GetDevDb();
+		$lat = floatval($lat);
+		$lng = floatval($lng);
+		
+		$queryStr = array("place_long"=>$fullAdd, "lat_lng"=>array($lat,$lng));
+		
+		$c = $db->Places->find($queryStr);
+		
+		$markers = array();
+		foreach($c as $doc)
+			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$doc['people']));
+
 		echo json_encode($markers);
 	}
 	
@@ -58,11 +75,21 @@
 	$sw_lat = $_GET['sw_lat'];
 	$sw_lng = $_GET['sw_lng'];
 	
+	$fullAddress = $_GET['fullAddress'];
+	$lat = $_GET['lat'];
+	$lng = $_GET['lng'];
+	
 	switch($action)
 	{
 		case "refreshMarkers":
 			if (isset($ne_lat, $ne_lng, $sw_lat, $sw_lng))
 				GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng);
+			else
+				echo -1;
+			break;
+		case "markerForAddress":
+			if (isset($fullAddress, $lat, $lng))
+				GetPlaceForAddress($fullAddress, $lat, $lng);
 			else
 				echo -1;
 			break;
