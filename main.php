@@ -1,26 +1,48 @@
 <?php
-# Provides access to app specific values such as your app id and app secret.
-# Defined in 'AppInfo.php'
-require_once 'AppInfo.php';
-require_once 'kint/Kint.class.php';
-require_once 'utils.php';
-require_once 'sdk/src/facebook.php';
 
-# Stop making excess function calls
-$app_id = AppInfo::appID();
-$app_url = AppInfo::getUrl();
+	# Provides access to app specific values such as your app id and app secret.
+	# Defined in 'AppInfo.php'
+	require_once 'AppInfo.php';
+	require_once 'kint/Kint.class.php';
+	require_once 'utils.php';
+	require_once 'sdk/src/facebook.php';
 
-# Enforce https on production
-if (substr($app_url, 0, 8) != 'https://' && $_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
-    header('Location: https://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    exit();
-}
+	# Stop making excess function calls
+	$app_id = AppInfo::appID();
+	$app_url = AppInfo::getUrl();
 
-$facebook = new Facebook(array(
-    'appId'  => $app_id,
-    'secret' => AppInfo::appSecret(),
-));
+	# Enforce https on production
+	if (substr($app_url, 0, 8) != 'https://' && $_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
+	    header('Location: https://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+	    exit();
+	}
 
+	$facebook = new Facebook(array(
+	    'appId'  => $app_id,
+	    'secret' => AppInfo::appSecret(),
+	));
+
+	$user_id = $facebook->getUser();
+	if ($user_id) {
+	    try {
+	        # Fetch the viewer's basic information
+	        $basic = $facebook->api('/me?fields=id,name,picture,link');
+	    } catch (FacebookApiException $e) {
+	        # If the call fails we check if we still have a user. The user will be
+	        # cleared if the error is because of an invalid accesstoken
+	        if (!$facebook->getUser()) {
+	            header('Location: ' . AppInfo::getUrl($_SERVER['REQUEST_URI']));
+	            exit();
+	        }
+	    }
+
+		$profile_id = $basic['id'];
+		$profile_name = $basic['name'];
+		$profile_link = $basic['link'];
+		$profile_photo_link = "https://graph.facebook.com/".$profile_id."/picture?type=square&return_ssl_resources=1";
+	
+		echo "<!-- ". $profile_id .",". $profile_name .",". $profile_link .",". $profile_photo_link . "--> ";
+	}	
 ?>
 
 <!DOCTYPE html>
@@ -54,9 +76,10 @@ $facebook = new Facebook(array(
 		<div id="infoBox" class="span3 alert alert-info" style="padding-right:14px">
 			<b>Start here!</b> Search for your address in the box:
 		</div>
-		<form method="post" class="form-inline span5" id="addressForm" style="margin-top:4px">
-			<input type="text" class="span6" placeholder="Enter your address here" id="addressBox">
+		<form method="post" class="form-inline span6" id="addressForm" style="margin-top:4px">
+			<input type="text" class="span5" placeholder="Enter your address here" id="addressBox">
 			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
+			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
 	</div>
 	
@@ -74,7 +97,7 @@ $facebook = new Facebook(array(
 				console.log("refresh markers called");
 				currentBounds = window.map.map.getBounds();
 
-				$.ajax({
+				rm = $.ajax({
 					type: "GET",
 					url: "fetch.php",
 					data: { 
@@ -271,7 +294,7 @@ $facebook = new Facebook(array(
 					
 				return "<div>" +
 					   "Wharton peeps at \"" + shortAddress + "\" <br/>" +
-					   peopleList + extra +
+					   peopleList + 
 					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
 					   "</div>";
 			}
@@ -318,8 +341,11 @@ $facebook = new Facebook(array(
 					});
 				});
 				
-				// Address default value
-				$('#address').val('2110 Spruce St philly pa');
+				$('#spinner').ajaxStart(function(){
+					$(this).show();
+				}).ajaxStop(function(){
+					$(this).hide();
+				});
 				
 				// Marker confirmation - Yes handler
 				$('#fullScreenMap').on('click','#yesMarker',function(e){
