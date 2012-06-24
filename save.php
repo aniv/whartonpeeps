@@ -1,5 +1,7 @@
 <?php
 
+	error_reporting (E_ALL ^ E_NOTICE);
+	
 	function GetDb()
 	{
 		if (getenv("DB_MODE") == "PROD")

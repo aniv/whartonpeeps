@@ -1,6 +1,7 @@
 <?php
 
 	header('content-type: application/json; charset=utf-8'); // obviates the need for $.parseJSON on the client side..
+	error_reporting (E_ALL ^ E_NOTICE);
 	
 	function GetDevDb()
 	{
