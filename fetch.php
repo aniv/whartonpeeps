@@ -1,5 +1,7 @@
 <?php
 
+	header('content-type: application/json; charset=utf-8'); // obviates the need for $.parseJSON on the client side..
+	
 	function GetDevDb()
 	{
 		$m = new Mongo("mongodb://localhost/wpeeps");
@@ -14,11 +16,19 @@
 		return $db;
 	}
 	
-	function GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng)
+	function GetDb()
+	{
+		if (getenv("DB_MODE") == "PROD")
+			return GetProdDb();
+		else
+			return GetDevDb();
+	}
+	
+	function GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng, $callback)
 	{
 		// db.places.find({"loc" : {"$within" : {"$box" : box}}})
 		
-		$db = GetDevDb();
+		$db = GetDb();
 		$ne_lat = floatval($ne_lat);
 		$ne_lng = floatval($ne_lng);
 		$sw_lat = floatval($sw_lat);
@@ -38,12 +48,15 @@
 		foreach($c as $doc)
 			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$doc['people']));
 			
-		echo json_encode($markers);
+		if (isset($callback))
+			echo $callback . '('. json_encode($markers) .')';
+		else
+			echo json_encode($markers);
 	}
 	
-	function GetPlaceForAddress($fullAdd, $lat, $lng)
+	function GetPlaceForAddress($fullAdd, $lat, $lng, $callback)
 	{
-		$db = GetDevDb();
+		$db = GetDb();
 		$lat = floatval($lat);
 		$lng = floatval($lng);
 		
@@ -55,7 +68,20 @@
 		foreach($c as $doc)
 			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$doc['people']));
 
-		echo json_encode($markers);
+		if (isset($callback))
+			echo $callback . '('. json_encode($markers) .')';
+		else
+			echo json_encode($markers);
+	}
+	
+	function GetClientIpAddress($callback)
+	{
+		$ip = $_SERVER['REMOTE_ADDR'];
+		
+		if (isset($callback))
+			echo $callback . '('. $ip .')';
+		else
+			echo "\"". $ip . "\"";
 	}
 	
 	function GetTopUsersForPlace($placeId)
@@ -79,19 +105,24 @@
 	$lat = $_GET['lat'];
 	$lng = $_GET['lng'];
 	
+	$callback = $_GET['callback'];
+	
 	switch($action)
 	{
 		case "refreshMarkers":
 			if (isset($ne_lat, $ne_lng, $sw_lat, $sw_lng))
-				GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng);
+				GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng, $callback);
 			else
 				echo -1;
 			break;
 		case "markerForAddress":
 			if (isset($fullAddress, $lat, $lng))
-				GetPlaceForAddress($fullAddress, $lat, $lng);
+				GetPlaceForAddress($fullAddress, $lat, $lng, $callback);
 			else
 				echo -1;
+			break;
+		case "getIP":
+			GetClientIpAddress($callback);
 			break;
 	}
 ?>

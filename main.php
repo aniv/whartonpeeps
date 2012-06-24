@@ -81,6 +81,9 @@
 			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
+		<div class="span2">
+			<a class="btn btn-inverse" style="margin-top:4px" href="<?php if ($user_id) $facebook->getLogoutUrl(); ?>">Log-out</a>
+		</div>
 	</div>
 	
 	<div class="row-fluid">
@@ -90,11 +93,11 @@
 			window.map = null;
 			window.viewMarkers = {};
 			window.modelMarkers = {};
-			//window.modelMarkers = [];
+			window.clientIP = null;
 			
 			function refreshMarkers()
 			{
-				console.log("refresh markers called");
+				console.log("RefreshMarkers() called");
 				currentBounds = window.map.map.getBounds();
 
 				rm = $.ajax({
@@ -108,16 +111,15 @@
 						sw_lng: currentBounds.getSouthWest().lng()
 					},
 				}).done(function(msg){
-					console.log("Requesting fresh markers");
-					console.log("Server response: " + msg);
-					refreshMarkersHandler($.parseJSON(msg));
+					console.log("Received fresh markers");
+					// console.log("Server response: " + $.serializeArray(msg));
+					refreshMarkersHandler(msg);
 				});
 			}
 			
 			function refreshMarkersHandler(markersInCurrentBounds)
 			{
 				window.modelMarkers = {}; // reset model markers
-				//window.modelMarkers = []; // reset model markers
 				dirtyViewMarkers = $.map(window.viewMarkers, function(vm,i){ if (vm.dirty) return [[vm.position.lat(), vm.position.lng(), i]];} );
 				
 				for(i in markersInCurrentBounds)
@@ -164,6 +166,7 @@
 						shortAddress: shortAdd, 
 						lat: lat, 
 						lng: lng,
+						ip: window.clientIP,
 						fbUserId: null
 					},
 				}).done(function(msg){
@@ -184,7 +187,7 @@
 						lng: latlng.lng()
 					}
 				}).done(function(msg){
-					getMarkerForAddressHandler($.parseJSON(msg), fullAdd, shortAdd, latlng);
+					getMarkerForAddressHandler(msg, fullAdd, shortAdd, latlng);
 				});
 			}
 			
@@ -236,8 +239,9 @@
 						m = window.map.addMarker({
 							lat: latlng.lat(),
 							lng: latlng.lng(),
+							title: dbMarker.place_short,
 							infoWindow: {
-								content: existingMarkerInfoWindowMarkup(dbMarker.place_long, dbMarker.place_short, dbMarker.people, markerNum, " ")
+								content: existingMarkerInfoWindowMarkup(dbMarker.place_short, dbMarker.place_long, dbMarker.people, markerNum, " ")
 							}
 						});
 						window.viewMarkers[markerNum] = m;  // add to view markers; may or may not be destroyed via prompt
@@ -309,6 +313,17 @@
 					zoom: 16,
 					height: ($(window).height()-46-12-25)+'px',
 					idle: refreshMarkers
+				});
+				
+				// Client IP address
+				rm = $.ajax({
+					type: "GET",
+					url: "fetch.php",
+					data: { 
+						action: "getIP"
+					},
+				}).done(function(msg){
+					window.clientIP = msg;
 				});
 				
 				// Address autocomplete config
