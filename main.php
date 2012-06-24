@@ -390,9 +390,9 @@
 					lng = $('#lng').val();
 					<?php
 						if (!$user_id)
-							echo "\t"."fb=null";
+							echo "fb = null";
 						else
-							echo "\t"."fb=$profile_id";
+							echo "fb = $profile_id";
 					?>
 					
 					//addLocationToDB(fullAdd, shortAdd, lat, lng);
@@ -400,7 +400,7 @@
 					
 					// Dismiss info window
 					marker = window.viewMarkers[markerNum];
-					window.viewMarkers[markerNum].infoWindow.content = existingMarkerInfoWindowMarkup(shortAdd, fullAdd, [0], markerNum, " dirty ");
+					window.viewMarkers[markerNum].infoWindow.content = existingMarkerInfoWindowMarkup(shortAdd, fullAdd, [fb], markerNum, "dirty");
 					window.viewMarkers[markerNum].infoWindow.close();
 					window.viewMarkers[markerNum].dirty = true;  // set dirty flag
 					
