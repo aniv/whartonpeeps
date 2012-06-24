@@ -36,7 +36,7 @@
 											"created_by"=>$userId, 
 											"created_ip"=>$ip,
 											"schema_version"=>"1.0" ));
-		return $result;						
+		return $result;
 		
 	}
 
@@ -57,7 +57,7 @@
 											"created_by"=>null, 
 											"created_ip"=>$ip,
 											"schema_version"=>"1.0" ));
-		return $result;						
+		return $result;
 	}
 	
 	

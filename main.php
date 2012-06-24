@@ -158,21 +158,30 @@
 						}
 				}
 			}
-			
+
 			function addLocationToDB(fullAdd, shortAdd, lat, lng)
 			{
+				addLocationAndUserToDB(fullAdd, shortAdd, lat, lng, null);				
+			}
+			
+			function addLocationAndUserToDB(fullAdd, shortAdd, lat, lng, fb)
+			{
+				data = {};
+				data.action = "newPlaceAndUser";
+				data.fullAddress = fullAdd;
+				data.shortAddress = shortAdd;
+				data.lat = lat; 
+				data.lng = lng;
+				data.ip = window.clientIP;
+				data.fbUserId = fb;
+				// data.fbUserName = (fb ? fb.user_name : fb);
+				// data.fbProfileUrl = (fb ? fb.profile_url : fb);
+				// data.fbProfilePhotoUrl = (fb ? fb.profile_photo_url : fb);
+								
 				$.ajax({
 					type: "POST",
 					url: "save.php",
-					data: { 
-						action: "newPlaceAndUser",
-						fullAddress: fullAdd, 
-						shortAddress: shortAdd, 
-						lat: lat, 
-						lng: lng,
-						ip: window.clientIP,
-						fbUserId: null
-					},
+					data: data
 				}).done(function(msg){
 					console.log("Data sent to server");
 					console.log("Server response: " + msg);
@@ -296,13 +305,16 @@
 		
 			function existingMarkerInfoWindowMarkup(shortAddress, fullAddress, people, markerNum, extra)
 			{
-				var peopleList = "";
+				var peopleImageList = "";
 				for(p in people)
-					peopleList += p;
-					
+				{
+					fbUserId = people[p];
+					peopleImageList += "<img src=\'https://graph.facebook.com/"+fbUserId+"/picture?type=square&return_ssl_resources=1\' height=\'25px\'>";
+				}
+
 				return "<div>" +
 					   "Wharton peeps at \"" + shortAddress + "\" <br/>" +
-					   peopleList + 
+					   peopleImageList + 
 					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
 					   "</div>";
 			}
@@ -376,7 +388,15 @@
 					shortAdd = $('#shortAddress').val();
 					lat = $('#lat').val();
 					lng = $('#lng').val();
-					addLocationToDB(fullAdd, shortAdd, lat, lng);
+					<?php
+						if (!$user_id)
+							echo "\t"."fb=null";
+						else
+							echo "\t"."fb=$profile_id";
+					?>
+					
+					//addLocationToDB(fullAdd, shortAdd, lat, lng);
+					addLocationAndUserToDB(fullAdd, shortAdd, lat, lng, fb);
 					
 					// Dismiss info window
 					marker = window.viewMarkers[markerNum];
