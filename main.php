@@ -309,10 +309,10 @@
 				for(p in people)
 				{
 					fbUserId = people[p];
-					peopleImageList += "<img src=\'https://graph.facebook.com/"+fbUserId+"/picture?type=square&return_ssl_resources=1\' height=\'25px\'>";
+					peopleImageList += "<img src=\'https://graph.facebook.com/"+fbUserId+"/picture?type=square&return_ssl_resources=1\' height=\'25\' width=\'25\' style='padding:1px'>";
 				}
 
-				return "<div>" +
+				return "<div style='width:250px;height:"+ (Math.ceil(people.length / 6)*30)+20 +"px'>" +
 					   "Wharton peeps at \"" + shortAddress + "\" <br/>" +
 					   peopleImageList + 
 					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
