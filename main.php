@@ -42,6 +42,10 @@
 		$profile_photo_link = "https://graph.facebook.com/".$profile_id."/picture?type=square&return_ssl_resources=1";
 	
 		echo "<!-- ". $profile_id .",". $profile_name .",". $profile_link .",". $profile_photo_link . "--> ";
+	}
+	else
+	{
+		echo "<!-- No Facebook data available -->";
 	}	
 ?>
 
@@ -82,7 +86,7 @@
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
 		<div class="span2">
-			<a class="btn btn-inverse" style="margin-top:4px" href="<?php if ($user_id) $facebook->getLogoutUrl(); ?>">Log-out</a>
+			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" title="<?php if (!$user_id) echo "Facebook API Unavailable"; ?>" href="<?php if ($user_id) $facebook->getLogoutUrl(); ?>">Log-out</a>
 		</div>
 	</div>
 	
