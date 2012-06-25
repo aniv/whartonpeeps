@@ -350,11 +350,13 @@
 				}).done(function(previews){
 					for(p in previews)
 					{
-						if (previews[p].profile_id == "null")
+						if (previews[p].profile_id == null)  // local debug
 							previews[p].profile_id = 0;
-						imgLink = $("#p"+previews[p].profile_id);
-						imgLink.attr('href', previews[p].profile_url);
-						imgLink.attr('title', previews[p].profile_name);
+
+						$("#p"+previews[p].profile_id).ready(function(){
+							$(this).attr('href', previews[p].profile_url);
+							$(this).attr('title', previews[p].profile_name);
+						});
 					}
 				});
 			}
