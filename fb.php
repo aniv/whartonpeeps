@@ -22,44 +22,25 @@
 
 	$facebook = new Facebook(array(
 	    'appId'  => $app_id,
-	    'secret' => AppInfo::appSecret(),
+	    'secret' => AppInfo::appSecret()
 	));
 
 	function GetFacebookPreviews($fbList)
 	{
-		for($fbList as $i=>$fbId)
+		foreach($fbList as $i)
 		{
-			$fql = "SELECT id, name, url, pic FROM profile";
+			$fql = "SELECT id, name, url, pic FROM profile WHERE id = $fbList[$i]";
+			echo $fql;
 			$res = $facebook->api(array('method'=>'fql.query','query'=>$fql));
 			
 			$result = array("profile_id"=>$res[0]['id'], "profile_name"=>$res[0]['name'], "profile_link"=>$res[0]['url'], "profile_photo_link"=>$res[0]['pic']);
-
+	
 			if (isset($callback))
 				echo $callback . '('. json_encode($result) .')';
 			else
 				echo json_encode($result);
 		}
 	}
-
-	// $user_id = $facebook->getUser();
-	// 
-	// if ($user_id) {
-	//     try {
-	// 
-	//     } catch (FacebookApiException $e) {
-	//         # If the call fails we check if we still have a user. The user will be
-	//         # cleared if the error is because of an invalid accesstoken
-	//         if (!$facebook->getUser()) {
-	//             header('Location: ' . AppInfo::getUrl($_SERVER['REQUEST_URI']));
-	//             exit();
-	//         }
-	//     }
-	// 
-	// }
-	// else
-	// {
-	// 	echo "<!-- No Facebook data available -->";
-	// }	
 	
 	$action = $_POST['action'];
 	$fbList = $_POST['fbList'];
