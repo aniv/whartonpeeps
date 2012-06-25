@@ -72,6 +72,11 @@
 			height: 25px;
 			padding: 2px;
 		}
+		
+		.infoWindowButtons {
+			margin: 5px;
+			margin-left: 2.5px;
+		}
 		</style>
 
 		<script type="text/javascript">
@@ -332,7 +337,9 @@
 
 				markup = "<div id='infoWindow' style='height:"+ ((Math.ceil(people.length / 6)+2)*30) +"px'>" +
 					   "Wharton peeps at " + shortAddress + ": <br/>" +
-					   peopleImageList + 
+					   peopleImageList + "<br/>" +
+					   "<button class='btn btn-mini btn-success infoWindowButtons' type='submit' id='addUser'>Add</button>" +
+					   "<button class='btn btn-mini btn-info infoWindowButtons' type='submit' id='moreUsers'>More</button>" +
 					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
 					   "</div>";
 				return markup;
