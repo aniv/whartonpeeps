@@ -349,7 +349,13 @@
 					},
 				}).done(function(previews){
 					for(p in previews)
-						$("#p"+previews[p].profile_id).attr('href', previews[p].profile_url).attr('title', previews[p].profile_name);
+					{
+						if (previews[p].profile_id == "null")
+							previews[p].profile_id = 0;
+						imgLink = $("#p"+previews[p].profile_id);
+						imgLink.attr('href', previews[p].profile_url);
+						imgLink.attr('title', previews[p].profile_name);
+					}
 				});
 			}
 			
