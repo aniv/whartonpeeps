@@ -47,8 +47,13 @@
 		
 		$markers = array();
 		foreach($c as $doc)
-			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$doc['people']));
-			
+		{
+			$x = $doc['people'];
+			$y = array_slice($x, 0, 22, true);
+
+			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$y));
+		}
+		
 		if (isset($callback))
 			echo $callback . '('. json_encode($markers) .')';
 		else
@@ -67,8 +72,13 @@
 		
 		$markers = array();
 		foreach($c as $doc)
-			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$doc['people']));
-
+		{
+			$x = $doc['people'];
+			$y = array_slice($x, 0, 22, true);
+			
+			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$y));
+		}
+		
 		if (isset($callback))
 			echo $callback . '('. json_encode($markers) .')';
 		else
@@ -85,16 +95,11 @@
 			echo "\"". $ip . "\"";
 	}
 	
-	function GetTopUsersForPlace($placeId)
-	{
-		
-	}
 	
-	function GetExpandedUsersForPlace($placeId)
+	function GetExpandedUsersForPlace($placeHash)
 	{
 		
 	}
-
 	
 	$action = $_GET['action'];
 	$ne_lat = $_GET['ne_lat'];

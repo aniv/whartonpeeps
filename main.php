@@ -59,6 +59,20 @@
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
 		<script type="text/javascript" src="javascript/gmaps.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
+		<style>
+		#infoWindow {
+			width: 250px;
+			height: 120px;
+			padding: 5px;
+			overflow: hidden;
+		}
+		
+		#infoWindow img {
+			width: 25px;
+			height: 25px;
+			padding: 2px;
+		}
+		</style>
 
 		<script type="text/javascript">
 
@@ -104,7 +118,7 @@
 				console.log("RefreshMarkers() called");
 				currentBounds = window.map.map.getBounds();
 
-				rm = $.ajax({
+				$.ajax({
 					type: "GET",
 					url: "fetch.php",
 					data: { 
@@ -131,7 +145,7 @@
 					mm = markersInCurrentBounds[i];
 					
 					// rebuild the view just for the model markers (view markers are left as is)
-					window.map.addMarker({
+					mvm = window.map.addMarker({
 						lat: mm.lat_lng[0],
 						lng: mm.lat_lng[1],
 						title: mm.place_short,
@@ -139,6 +153,10 @@
 							content: existingMarkerInfoWindowMarkup(mm.place_short, mm.place_long, mm.people, i, "")
 						}
 					});
+					
+					google.maps.event.addListener(mvm.infoWindow, 'domready', function() {
+						getFacebookPreviews(mm.people, i);
+			        });
 
 					// rebuild the model markers
 					// over time, modelMarkers will hold all markers that were ever requested from db
@@ -309,15 +327,35 @@
 				for(p in people)
 				{
 					fbUserId = people[p];
-					peopleImageList += "<img src=\'https://graph.facebook.com/"+fbUserId+"/picture?type=square&return_ssl_resources=1\' height=\'25\' width=\'25\' style='padding:1px'>";
+					peopleImageList += "<a id='p"+fbUserId+"' href='#' title='#'><img src=\'https://graph.facebook.com/"+fbUserId+"/picture?type=square&return_ssl_resources=1\'></a>";
 				}
 
-				return "<div style='width:250px;height:"+ (Math.ceil(people.length / 6)*30)+20 +"px'>" +
-					   "Wharton peeps at \"" + shortAddress + "\" <br/>" +
+				markup = "<div id='infoWindow' style='height:"+ ((Math.ceil(people.length / 6)+2)*30) +"px'>" +
+					   "Wharton peeps at " + shortAddress + ": <br/>" +
 					   peopleImageList + 
 					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
 					   "</div>";
+				return markup;
 			}
+			
+			function getFacebookPreviews(fbList, markerNum)
+			{
+				$.ajax({
+					type: "POST",
+					url: "fb.php",
+					data: { 
+						action: "getFacebookPreviews",
+						fbList: fbList
+					},
+				}).done(function(previews){
+					for(p in previews)
+						$("#p"+previews[p].profile_id).attr('href', previews[p].profile_url).attr('title', previews[p].profile_name);
+				});
+			}
+			
+			
+			
+			
 	
 			$(document).ready(function(){
 				
@@ -332,7 +370,7 @@
 				});
 				
 				// Client IP address
-				rm = $.ajax({
+				$.ajax({
 					type: "GET",
 					url: "fetch.php",
 					data: { 
@@ -372,11 +410,20 @@
 					});
 				});
 				
+				// AJAX spinners
 				$('#spinner').ajaxStart(function(){
 					$(this).show();
 				}).ajaxStop(function(){
 					$(this).hide();
 				});
+				
+				// InfoWindow height adjuster
+				// for (mm in window.map.markers)
+				// 	google.maps.event.addListener(window.map.markers[mm].infoWindow, 'domready', function() {
+				// 	  var height = $('#infoWindow').parent().parent().parent().height();
+				// 	  height = 320;
+				// 	  $('#infoWindow').parent().parent().parent().height(height);
+				// 	});
 				
 				// Marker confirmation - Yes handler
 				$('#fullScreenMap').on('click','#yesMarker',function(e){
@@ -423,6 +470,7 @@
 					marker.setMap(null);		  // remove from view
 					delete window.viewMarkers[markerNum];  // remove from client model
 				});
+				
 			});
 		</script>
 	</div>
