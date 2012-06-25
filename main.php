@@ -341,7 +341,7 @@
 			function getFacebookPreviews(fbList, markerNum)
 			{
 				$.ajax({
-					type: "POST",
+					type: "GET",
 					url: "fb.php",
 					data: { 
 						action: "getFacebookPreviews",

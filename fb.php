@@ -27,9 +27,9 @@
 
 	function GetFacebookPreviews($fbList)
 	{
-		foreach($fbList as $i)
+		foreach($fbList as $fbUserId)
 		{
-			$fql = "SELECT id, name, url, pic FROM profile WHERE id = $fbList[$i]";
+			$fql = "SELECT id, name, url, pic FROM profile WHERE id = $fbUserId";
 			echo $fql;
 			$res = $facebook->api(array('method'=>'fql.query','query'=>$fql));
 			
@@ -42,9 +42,9 @@
 		}
 	}
 	
-	$action = $_POST['action'];
-	$fbList = $_POST['fbList'];
-	$callback = $_POST['callback'];
+	$action = $_GET['action'];
+	$fbList = $_GET['fbList'];
+	$callback = $_GET['callback'];
 	
 	switch($action)
 	{
