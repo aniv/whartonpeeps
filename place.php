@@ -9,7 +9,7 @@
 	header('content-type: text/html;charset=UTF-8');
 
 	$placeHash = $_GET['hash'];
-	$placeDetails = array("place_short"=>"1800 chesnut", "place_long"=>"1800 chesnut philly", "people"=>array(1223131,1229197), "lat_lng"=>0);
+	$placeDetails = array("place_short"=>"1800 chesnut", "place_long"=>"1800 chesnut philly", "people"=>array(1201997), "lat_lng"=>0); //1223131
 //	$placeDetails = GetExpandedUsersForPlace($placeHash);
 	
 	$place_short = $placeDetails['place_short'];
@@ -81,7 +81,7 @@
 						<?php
 						
 						echo $peopleData;
-						var_dump($peopleData);
+						echo var_export($peopleData);
 						
 						foreach ($peopleData as $pd)
 						{
