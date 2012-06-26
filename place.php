@@ -81,8 +81,8 @@
 						
 						foreach ($peopleData as $pd)
 						{
-							echo "<tr><td><img src=\'$pd['pic']\'></td>";
-							echo "<td><a href=\'$pd['url']\'>$pd['name']</a></td>";
+							echo "<tr><td><img src='".$pd['pic']."'></td>";
+							echo "<td><a href='".$pd['url']."'>".$pd['name']."</a></td>";
 							echo "</tr>";
 						}
 						
