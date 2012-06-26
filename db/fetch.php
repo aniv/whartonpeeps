@@ -95,10 +95,20 @@
 			echo "\"". $ip . "\"";
 	}
 	
-	
 	function GetExpandedUsersForPlace($placeHash)
 	{
+		$db = GetDb();
+		$queryStr = array("place_hash"=>$placeHash);
 		
+		$c = $db->Places->find($queryStr);
+		
+		$placeDetails = array();
+		foreach($c as $doc)
+		{
+			array_push($placeDetails, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$doc['people']));
+		}
+		
+		return $placeDetails[0];
 	}
 	
 	$action = $_GET['action'];

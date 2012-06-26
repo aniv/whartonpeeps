@@ -158,7 +158,7 @@
 						lng: mm.lat_lng[1],
 						title: mm.place_short,
 						infoWindow : {
-							content: existingMarkerInfoWindowMarkup(mm.place_short, mm.place_long, mm.people, i, "")
+							content: existingMarkerInfoWindowMarkup(mm.place_short, mm.place_long, mm.people, i, mm.place_hash)
 						}
 					});
 					
@@ -293,7 +293,7 @@
 							lng: latlng.lng(),
 							title: dbMarker.place_short,
 							infoWindow: {
-								content: existingMarkerInfoWindowMarkup(dbMarker.place_short, dbMarker.place_long, dbMarker.people, markerNum, " ")
+								content: existingMarkerInfoWindowMarkup(dbMarker.place_short, dbMarker.place_long, dbMarker.people, markerNum, dbMarker.place_hash)
 							}
 						});
 						window.viewMarkers[markerNum] = m;  // add to view markers; may or may not be destroyed via prompt
@@ -342,7 +342,7 @@
 					   "</div>";
 			}
 		
-			function existingMarkerInfoWindowMarkup(shortAddress, fullAddress, people, markerNum, extra)
+			function existingMarkerInfoWindowMarkup(shortAddress, fullAddress, people, markerNum, hash)
 			{
 				var peopleImageList = "";
 				for(p in people)
@@ -353,7 +353,7 @@
 
 				markup = "<div id='infoWindow' style='height:"+ ((Math.ceil(people.length / 6)+2)*30) +"px'>" +
 					   "Wharton peeps at " + shortAddress + ": <br/>" +
-					   peopleImageList + "<br/>" +
+					   peopleImageList + " <a href='place.php?hash=" + hash + "'>more..</a><br/>" +
 					   "<button class='btn btn-mini btn-success infoWindowButtons' type='submit' id='addUser'>Add</button>" +
 					   "<button class='btn btn-mini btn-info infoWindowButtons' type='submit' id='moreUsers'>More</button>" +
 					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
@@ -365,7 +365,7 @@
 			{
 				$.ajax({
 					type: "GET",
-					url: "fb.php",
+					url: "db/fb.php",
 					data: { 
 						action: "getFacebookPreviews",
 						fbList: fbList
@@ -479,7 +479,7 @@
 					
 					// Dismiss info window
 					marker = window.viewMarkers[markerNum];
-					window.viewMarkers[markerNum].infoWindow.content = existingMarkerInfoWindowMarkup(shortAdd, fullAdd, [fb], markerNum, "dirty");
+					window.viewMarkers[markerNum].infoWindow.content = existingMarkerInfoWindowMarkup(shortAdd, fullAdd, [fb], markerNum, 0);
 					window.viewMarkers[markerNum].infoWindow.close();
 					window.viewMarkers[markerNum].dirty = true;  // set dirty flag
 					

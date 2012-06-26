@@ -5,10 +5,10 @@
 
 	# Provides access to app specific values such as your app id and app secret.
 	# Defined in 'AppInfo.php'
-	require_once 'AppInfo.php';
-	require_once 'kint/Kint.class.php';
-	require_once 'utils.php';
-	require_once 'sdk/src/facebook.php';
+	require_once '../AppInfo.php';
+	require_once '../kint/Kint.class.php';
+	require_once '../utils.php';
+	require_once '../sdk/src/facebook.php';
 
 	# Stop making excess function calls
 	$app_id = AppInfo::appID();
