@@ -41,7 +41,7 @@
 		$profile_link = $basic['link'];
 		$profile_photo_link = "https://graph.facebook.com/".$profile_id."/picture?type=square&return_ssl_resources=1";
 	
-		echo "<!-- ". $profile_id .",". $profile_name .",". $profile_link .",". $profile_photo_link . "--> ";
+		// echo "<!-- ". $profile_id .",". $profile_name .",". $profile_link .",". $profile_photo_link . "--> ";
 	}
 	else
 	{
@@ -117,6 +117,7 @@
 			window.viewMarkers = {};
 			window.modelMarkers = {};
 			window.clientIP = null;
+			window.infoWindowOpen = null;
 			
 			function refreshMarkers()
 			{
@@ -125,7 +126,7 @@
 
 				$.ajax({
 					type: "GET",
-					url: "fetch.php",
+					url: "db/fetch.php",
 					data: { 
 						action: "refreshMarkers",
 						ne_lat: currentBounds.getNorthEast().lat(), 
@@ -145,6 +146,8 @@
 				window.modelMarkers = {}; // reset model markers
 				dirtyViewMarkers = $.map(window.viewMarkers, function(vm,i){ if (vm.dirty) return [[vm.position.lat(), vm.position.lng(), i]];} );
 				
+				window.map.removeMarkers();
+				
 				for(i in markersInCurrentBounds)
 				{
 					mm = markersInCurrentBounds[i];
@@ -163,6 +166,19 @@
 						getFacebookPreviews(mm.people, i);
 			        });
 
+					google.maps.event.addListener(mvm.infoWindow, 'closeclick', function() {
+						window.infoWindowOpen = null;
+					});
+
+					google.maps.event.addListener(mvm, 'click', function(e){
+					    console.log("clicked on a marker");
+						console.log(e);
+						e.cancelBubble = true;
+						e.stop();
+						
+						window.infoWindowOpen = mvm;
+					});
+					
 					// rebuild the model markers
 					// over time, modelMarkers will hold all markers that were ever requested from db
 					markerNum = murmurhash3_32_gc(mm.place_long,Math.floor(Math.random()*1e6)).toString();
@@ -203,7 +219,7 @@
 								
 				$.ajax({
 					type: "POST",
-					url: "save.php",
+					url: "db/save.php",
 					data: data
 				}).done(function(msg){
 					console.log("Data sent to server");
@@ -215,7 +231,7 @@
 			{
 				$.ajax({
 					type: "GET",
-					url: "fetch.php",
+					url: "db/fetch.php",
 					data: {
 						action: "markerForAddress",
 						fullAddress: fullAdd,
@@ -332,7 +348,7 @@
 				for(p in people)
 				{
 					fbUserId = people[p];
-					peopleImageList += "<a id='p"+fbUserId+"' href='#' title='#'><img src=\'https://graph.facebook.com/"+fbUserId+"/picture?type=square&return_ssl_resources=1\'></a>";
+					peopleImageList += "<a id='p"+fbUserId+"' href='#' alt='#'><img src=\'https://graph.facebook.com/"+fbUserId+"/picture?type=square&return_ssl_resources=1\'></a>";
 				}
 
 				markup = "<div id='infoWindow' style='height:"+ ((Math.ceil(people.length / 6)+2)*30) +"px'>" +
@@ -381,13 +397,14 @@
 					lng: -75.171998,
 					zoom: 16,
 					height: ($(window).height()-46-12-25)+'px',
-					idle: refreshMarkers
+					idle: function(){ console.log("idle"); if (window.infoWindowOpen == null) refreshMarkers(); },
+					dragend: function() { if (window.infoWindowOpen != null) { window.infoWindowOpen.infoWindow.close(); refreshMarkers(); } }
 				});
 				
 				// Client IP address
 				$.ajax({
 					type: "GET",
-					url: "fetch.php",
+					url: "db/fetch.php",
 					data: { 
 						action: "getIP"
 					},
