@@ -36,13 +36,10 @@
 	if ($user_id) {
 	    try {
 		
-	        $fql = 'SELECT name, url, pic from profile where uid in (' . implode(", ", $people) . ')';
+	        $fql = 'SELECT name, url, pic from profile where id in (' . implode(", ", $people) . ')';
 			echo $fql;
 			
-	        $peopleData = $facebook->api(array(
-	                                   'method' => 'fql.query',
-	                                   'query' => $fql,
-	                                 ));
+			$peopleData = $facebook->api(array('method'=>'fql.query','query'=>$fql));
 
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
