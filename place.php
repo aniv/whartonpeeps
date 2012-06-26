@@ -43,6 +43,7 @@
 	                                   'method' => 'fql.query',
 	                                   'query' => $fql,
 	                                 ));
+			var_dump($peopleData);
 
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
