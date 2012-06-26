@@ -43,7 +43,6 @@
 	                                   'method' => 'fql.query',
 	                                   'query' => $fql,
 	                                 ));
-			var_dump($peopleData);
 
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
@@ -81,8 +80,12 @@
 					<table class="table">
 						<?php
 						
+						echo $peopleData;
+						var_dump($peopleData);
+						
 						foreach ($peopleData as $pd)
 						{
+							var_dump($pd);
 							echo "<tr><td><img src='".$pd['pic']."'></td>";
 							echo "<td><a href='".$pd['url']."'>".$pd['name']."</a></td>";
 							echo "</tr>";
