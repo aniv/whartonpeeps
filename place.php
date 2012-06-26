@@ -38,12 +38,10 @@
 	        $fql = 'SELECT name, url, pic from profile where uid in (' . implode(", ", $people) . ')';
 			echo $fql;
 			
-	        $ret_obj = $facebook->api(array(
+	        $peopleData = $facebook->api(array(
 	                                   'method' => 'fql.query',
 	                                   'query' => $fql,
 	                                 ));
-
-	        echo '<pre>Name: ' . $ret_obj[0]['name'] . '</pre>';
 
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
@@ -61,9 +59,38 @@
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
 		<title>WhartonPeeps | <?php echo $place_short; ?></title>
+		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
 	</head>
 	
 	<body>
+		<div class="container">
+			<div class="row" style="margin-top:12px">
+				<div class="span1">
+					<img src="images/Map2.png" width=60 height=60/>
+				</div>
+				<div class="span7" style="margin-top:10px">
+					<h2>WhartonPeeps @ <?php echo $place_short; ?></h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="span9">
+					<table class="table">
+						<?php
+						
+						foreach ($peopleData as $pd)
+						{
+							echo "<tr><td><img src=\'$pd['pic']\'></td>";
+							echo "<td><a href=\'$pd['url']\'>$pd['name']</a></td>";
+							echo "</tr>";
+						}
+						
+						?>
+					</table>
+				</div>
+			</div>
+		</div>
 		
 	</body>
 </html>
