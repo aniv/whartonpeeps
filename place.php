@@ -74,6 +74,13 @@
 		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
+		<style>
+		.networks {
+			font-size:13px;
+			color:grey;
+			margin-top:10px;
+		}
+		</style>
 	</head>
 	
 	<body>
@@ -96,9 +103,9 @@
 						
 						foreach ($profileData as $pd)
 						{
-							echo "<tr><td><img src='".$pd['pic']."'></td>";
+							echo "<tr><td><a href='".$pd['url']."'><img src='".$pd['pic']."'></a></td>";
 							echo "<td><a href='".$pd['url']."'>".$pd['name']."</a>";
-							echo "<br/>Networks:<br/>";
+							echo "<div class='networks'>Networks:<br/>";
 							foreach ($networkData as $nd)
 							{
 								if ($nd['uid'] == $pd['id'])
@@ -111,7 +118,7 @@
 										echo " " . $network['name'] . "<br/>";
 									}
 							}
-							echo "</td>";
+							echo "</div></td>";
 							echo "</tr>";
 						}
 						
