@@ -40,7 +40,20 @@
 						"query2" => "SELECT uid, affiliations from user where uid in (SELECT id FROM #query1)" ));
 			echo $fql;
 			
-			$peopleData = $facebook->api(array('method'=>'fql.multiquery','queries'=>$fql));
+			$peopleDataRaw = $facebook->api(array('method'=>'fql.multiquery','queries'=>$fql));
+			$profileData = null;
+			$networkData = null;
+			
+			if ($peopleDataRaw[0]['name'] == 'query1')
+			{
+				$profileData = $peopleDataRaw[0]['fql_result_set'];
+				$networkData = $peopleDataRaw[1]['fql_result_set'];
+			}
+			else  // does the order ever change?
+			{
+				$profileData = $peopleDataRaw[1]['fql_result_set'];
+				$networkData = $peopleDataRaw[0]['fql_result_set'];				
+			}
 
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
@@ -78,14 +91,27 @@
 					<table class="table">
 						<?php
 						
-						echo $peopleData;
-						echo var_export($peopleData);
+						echo var_export($profileData);
+						echo var_export($networkData);
 						
-						foreach ($peopleData as $pd)
+						foreach ($profileData as $pd)
 						{
-							var_dump($pd);
 							echo "<tr><td><img src='".$pd['pic']."'></td>";
-							echo "<td><a href='".$pd['url']."'>".$pd['name']."</a><br/>Networks: </td>";
+							echo "<td><a href='".$pd['url']."'>".$pd['name']."</a>";
+							echo "<br/>Networks:<br/>";
+							foreach ($networkData as $nd)
+							{
+								if ($nd['uid'] == $pd['id'])
+									foreach ($nd['affiliations'] as $network)
+									{
+										if ($network['type'] == 'college')
+											echo "<i class='icon-book'></i> "
+										if ($network['type'] == 'work')
+											echo "<i class='icon-briefcase'></i> "
+										echo " " . $network['name'] . "<br/>";
+									}
+							}
+							echo "</td>";
 							echo "</tr>";
 						}
 						
