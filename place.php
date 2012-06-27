@@ -40,7 +40,7 @@
 						"query2" => "SELECT uid, affiliations from user where uid in (SELECT id FROM #query1)" ));
 			echo $fql;
 			
-			$peopleData = $facebook->api(array('method'=>'fql.query','queries'=>$fql));
+			$peopleData = $facebook->api(array('method'=>'fql.multiquery','queries'=>$fql));
 
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
