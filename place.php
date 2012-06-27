@@ -36,10 +36,8 @@
 	if ($user_id) {
 	    try {
 		
-	        $fql = {
-					"query1" : 'SELECT id, name, url, pic from profile where id in (' . implode(", ", $people) . ')',
-					"query2" : 'SELECT uid, affiliations from user where uid in (SELECT id FROM #query1)' 
-					}
+	        $fql = json_encode(array("query1" => "SELECT id, name, url, pic from profile where id in (" . implode(", ", $people) . ")",
+						"query2" => "SELECT uid, affiliations from user where uid in (SELECT id FROM #query1)" ));
 			echo $fql;
 			
 			$peopleData = $facebook->api(array('method'=>'fql.query','queries'=>$fql));
