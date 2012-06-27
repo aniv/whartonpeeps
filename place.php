@@ -38,8 +38,6 @@
 		
 	        $fql = json_encode(array("query1" => "SELECT id, name, url, pic from profile where id in (" . implode(", ", $people) . ")",
 						"query2" => "SELECT uid, affiliations from user where uid in (SELECT id FROM #query1)" ));
-			echo $fql;
-			
 			$peopleDataRaw = $facebook->api(array('method'=>'fql.multiquery','queries'=>$fql));
 			$profileData = null;
 			$networkData = null;
@@ -97,9 +95,6 @@
 				<div class="span9">
 					<table class="table">
 						<?php
-						
-						echo var_export($profileData);
-						echo var_export($networkData);
 						
 						foreach ($profileData as $pd)
 						{
