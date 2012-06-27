@@ -36,10 +36,13 @@
 	if ($user_id) {
 	    try {
 		
-	        $fql = 'SELECT name, url, pic from profile where id in (' . implode(", ", $people) . ')';
+	        $fql = {
+					"query1" : 'SELECT id, name, url, pic from profile where id in (' . implode(", ", $people) . ')',
+					"query2" : 'SELECT uid, affiliations from user where uid in (SELECT id FROM #query1)' 
+					}
 			echo $fql;
 			
-			$peopleData = $facebook->api(array('method'=>'fql.query','query'=>$fql));
+			$peopleData = $facebook->api(array('method'=>'fql.query','queries'=>$fql));
 
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
@@ -84,7 +87,7 @@
 						{
 							var_dump($pd);
 							echo "<tr><td><img src='".$pd['pic']."'></td>";
-							echo "<td><a href='".$pd['url']."'>".$pd['name']."</a></td>";
+							echo "<td><a href='".$pd['url']."'>".$pd['name']."</a><br/>Networks: </td>";
 							echo "</tr>";
 						}
 						
