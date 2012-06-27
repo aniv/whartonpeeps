@@ -105,9 +105,9 @@
 									foreach ($nd['affiliations'] as $network)
 									{
 										if ($network['type'] == 'college')
-											echo "<i class='icon-book'></i> "
+											echo "<i class='icon-book'></i> ";
 										if ($network['type'] == 'work')
-											echo "<i class='icon-briefcase'></i> "
+											echo "<i class='icon-briefcase'></i> ";
 										echo " " . $network['name'] . "<br/>";
 									}
 							}
