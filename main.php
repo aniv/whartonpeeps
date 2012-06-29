@@ -99,8 +99,8 @@
 		<div id="infoBox" class="span3 alert alert-info" style="padding-right:14px">
 			<b>Start here!</b> Search for your address in the box:
 		</div>
-		<form method="post" class="form-inline span6" id="addressForm" style="margin-top:4px">
-			<input type="text" class="span5" placeholder="Enter your address here" id="addressBox">
+		<form method="post" class="form-search span6" id="addressForm" style="margin-top:4px">
+			<input type="text" class="input-xxlarge" placeholder="Enter your address here" id="addressBox">
 			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
@@ -389,6 +389,9 @@
 			
 	
 			$(document).ready(function(){
+				
+				// console.log("Setting map height to " + ($(window).height()-46-12-25)+'px');
+				$("#fullScreenMap").height($(window).height()-46-12-25);
 				
 				// Main map config
 				window.map = new GMaps({
