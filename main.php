@@ -27,6 +27,10 @@
 	    try {
 	        # Fetch the viewer's basic information
 	        $basic = $facebook->api('/me?fields=id,name,picture,link');
+	
+			/* TODO: Check to see if the user is in the Wharton2012 group! */
+	
+	
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
 	        # cleared if the error is because of an invalid accesstoken
@@ -105,7 +109,7 @@
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
 		<div class="span2">
-			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" alt="<?php if (!$user_id) echo "Facebook API Unavailable"; else echo "Logout"; ?>" href="<?php if ($user_id) echo $facebook->getLogoutUrl(); ?>">Log-out</a>
+			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" alt="<?php if (!$user_id) echo "Facebook API Unavailable"; else echo "Logout"; ?>" href="<?php if ($user_id) echo $facebook->getLogoutUrl(array("next"=>"https://".$_SERVER['HTTP_HOST'])); ?>">Log-out</a>
 		</div>
 	</div>
 	
