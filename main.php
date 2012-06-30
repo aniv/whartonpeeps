@@ -105,7 +105,7 @@
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
 		<div class="span2">
-			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" alt="<?php if (!$user_id) echo "Facebook API Unavailable"; ?>" href="<?php if ($user_id) $facebook->getLogoutUrl(); ?>">Log-out</a>
+			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" alt="<?php if (!$user_id) echo "Facebook API Unavailable"; else echo "Logout"; ?>" href="<?php if ($user_id) echo $facebook->getLogoutUrl(); ?>">Log-out</a>
 		</div>
 	</div>
 	
