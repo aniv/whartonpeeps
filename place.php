@@ -9,8 +9,7 @@
 	header('content-type: text/html;charset=UTF-8');
 
 	$placeHash = $_GET['hash'];
-	$placeDetails = array("place_short"=>"1800 chesnut", "place_long"=>"1800 chesnut philly", "people"=>array(1201997), "lat_lng"=>0); //1223131
-//	$placeDetails = GetExpandedUsersForPlace($placeHash);
+	$placeDetails = GetExpandedUsersForPlace($placeHash);
 	
 	$place_short = $placeDetails['place_short'];
 	$place_long = $placeDetails['place_long'];
