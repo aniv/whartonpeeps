@@ -91,7 +91,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="span9">
+				<div class="span7">
 					<table class="table">
 						<?php
 						
@@ -115,6 +115,8 @@
 							echo "</div></td>";
 							echo "</tr>";
 						}
+						
+						echo "<tr><td><a href='main.php'>&lt; Back</a></td></tr>";
 						
 						?>
 					</table>

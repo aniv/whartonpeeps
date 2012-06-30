@@ -191,16 +191,23 @@
 					// window.modelMarkers.push(mm);
 					mm.markerNum = markerNum;
 					
-					// compare against view markers to see if dirty flag needs updating
+					// Process the dirty view markers
 					for(j in dirtyViewMarkers)
-						//if (dirtyViewMarkers[j][0] == mm.lat_lng[0] && dirtyViewMarkers[j][1] == mm.lat_lng[1])
+					{
+						// 1. compare against view markers to see if dirty flag needs updating
 						if (dirtyViewMarkers[j][2] == mm.markerNum)
 						{
-							k = dirtyViewMarkers[j][2];  // we stored in the index in the tuple
+							k = dirtyViewMarkers[j][2];  // we stored the viewMarker index in the tuple
 							window.viewMarkers[k].dirty = false;  // kind redundant huh?
 							delete window.viewMarkers[k];
 						}
-				}
+					}
+				}				
+					
+				// We have now processed all markers in window.viewMarkers, anything left is still dirty (might be cleaned out in the next refresh)
+				// Till then, we need to keep it around in the view.
+				// We do that by removing all markers from the map (done on line 3 in refreshMarkersHandler), but drawing back all the view markers
+				window.map.addMarkers(window.viewMarkers);
 			}
 
 			function addLocationToDB(fullAdd, shortAdd, lat, lng)
@@ -289,6 +296,7 @@
 					{
 						m = window.map.markers[mkIndex];
 						google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
+						window.infoWindowOpen = m;
 					}
 					// option 2. marker is not in view, so we add it in
 					else
@@ -304,6 +312,7 @@
 						});
 						window.viewMarkers[markerNum] = m;  // add to view markers; may or may not be destroyed via prompt
 						google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
+						window.infoWindowOpen = m;
 					}
 					$("#infoBox").html("<b>Great news!</b> Wharton peeps at that address");
 					$("#infoBox").addClass("alert-success").removeClass("alert-info");
@@ -328,6 +337,7 @@
 
 					window.viewMarkers[markerNum] = m;  // add to view markers; may or may not be destroyed via prompt
 					google.maps.event.trigger(m, 'click');  // Trigger auto pop-up
+					window.infoWindowOpen = m;
 				}
 				
 				// TODO: do we even need this?
