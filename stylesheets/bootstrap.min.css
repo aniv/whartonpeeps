@@ -73,8 +73,16 @@ img {
   -ms-interpolation-mode: bicubic;
 }
 
-#map_canvas img {
+/* Known bug in Bootstrap 2.0 */
+/* Corrected by AV for WhartonPeeps 6/29 */
+/* Documented here: https://github.com/twitter/bootstrap/issues/1552 */
+#fullScreenMap img {
   max-width: none;
+}
+
+#fullScreenMap label { 
+	width: auto; 
+	display:inline; 
 }
 
 button,

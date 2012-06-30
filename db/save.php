@@ -40,9 +40,16 @@
 		
 	}
 
-	function AddUserToPlace($placeId, $userId, $ip)
+	function AddUserToPlace($placeHash, $userId, $ip)
 	{
+		$db = GetDb();
+
+		$findCode = array("place_hash" => $placeHash);
+		$changeCode = array('$addToSet' => array("people" => $userId));
 		
+		$result = $db->Places->update($findCode, $changeCode);
+		
+		return $result;
 	}
 
 	function AddPlace($placeShort, $placeLong, $placeLat, $placeLng, $ip)
@@ -67,7 +74,7 @@
 	$placeLong = $_POST['fullAddress'];
 	$placeLat = floatval($_POST['lat']);
 	$placeLng = floatval($_POST['lng']);
-	$placeId = intval($_POST['placeId']);
+	$placeHash = $_POST['placeHash'];
 	$userId = intval($_POST['fbUserId']);
 	$ip = $_POST['ip'];
 	
@@ -80,8 +87,8 @@
 				echo -1;
 			break;
 		case "addUserToPlace":
-			if (isset($placeId, $userId, $ip))
-				echo AddUserToPlace($placeId, $userId, $ip);
+			if (isset($placeHash, $userId, $ip))
+				echo AddUserToPlace($placeHash, $userId, $ip);
 			else
 				echo -1;
 			break;

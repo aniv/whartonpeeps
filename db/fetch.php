@@ -26,7 +26,7 @@
 			return GetDevDb();
 	}
 	
-	function GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng, $callback)
+	function GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng, $userId, $callback)
 	{
 		// db.places.find({"loc" : {"$within" : {"$box" : box}}})
 		
@@ -35,6 +35,7 @@
 		$ne_lng = floatval($ne_lng);
 		$sw_lat = floatval($sw_lat);
 		$sw_lng = floatval($sw_lng);
+		$userId = intval($userId);
 		
 		$queryStr = array("lat_lng"=>array('$within'=>array('$box'=>array(array($sw_lat, $sw_lng),array($ne_lat, $ne_lng)))));
 		// $queryStr2 = array("lat_lng"=>array('$near'=>array($sw_lat, $sw_lng)));
@@ -50,9 +51,10 @@
 		foreach($c as $doc)
 		{
 			$x = $doc['people'];
+			$currentUserAtPlace = in_array($userId, $x);
 			$y = array_slice($x, 0, 22, true);
 
-			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$y));
+			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$y, "user_at_place"=>$currentUserAtPlace));
 		}
 		
 		if (isset($callback))
@@ -61,7 +63,7 @@
 			echo json_encode($markers);
 	}
 	
-	function GetPlaceForAddress($fullAdd, $lat, $lng, $callback)
+	function GetPlaceForAddress($fullAdd, $lat, $lng, $userId, $callback)
 	{
 		$db = GetDb();
 		$lat = floatval($lat);
@@ -75,9 +77,10 @@
 		foreach($c as $doc)
 		{
 			$x = $doc['people'];
+			$currentUserAtPlace = (array_search($userId, $x) != false ? true : false);
 			$y = array_slice($x, 0, 22, true);
 			
-			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$y));
+			array_push($markers, array("place_short"=>$doc['place_short'], "place_long"=>$doc['place_long'], "lat_lng"=>$doc['lat_lng'], "place_hash"=>$doc['place_hash'],"people"=>$y, "user_at_place"=>$currentUserAtPlace));
 		}
 		
 		if (isset($callback))
@@ -121,20 +124,21 @@
 	$fullAddress = $_GET['fullAddress'];
 	$lat = $_GET['lat'];
 	$lng = $_GET['lng'];
+	$userId = $_GET['fbUserId'];
 	
 	$callback = $_GET['callback'];
 	
 	switch($action)
 	{
 		case "refreshMarkers":
-			if (isset($ne_lat, $ne_lng, $sw_lat, $sw_lng))
-				GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng, $callback);
+			if (isset($ne_lat, $ne_lng, $sw_lat, $sw_lng, $userId))
+				GetPlacesInBox($ne_lat, $ne_lng, $sw_lat, $sw_lng, $userId, $callback);
 			else
 				echo -1;
 			break;
 		case "markerForAddress":
-			if (isset($fullAddress, $lat, $lng))
-				GetPlaceForAddress($fullAddress, $lat, $lng, $callback);
+			if (isset($fullAddress, $lat, $lng, $userId))
+				GetPlaceForAddress($fullAddress, $lat, $lng, $userId, $callback);
 			else
 				echo -1;
 			break;

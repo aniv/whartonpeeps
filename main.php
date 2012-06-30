@@ -105,7 +105,7 @@
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
 		<div class="span2">
-			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" title="<?php if (!$user_id) echo "Facebook API Unavailable"; ?>" href="<?php if ($user_id) $facebook->getLogoutUrl(); ?>">Log-out</a>
+			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" alt="<?php if (!$user_id) echo "Facebook API Unavailable"; ?>" href="<?php if ($user_id) $facebook->getLogoutUrl(); ?>">Log-out</a>
 		</div>
 	</div>
 	
@@ -132,7 +132,8 @@
 						ne_lat: currentBounds.getNorthEast().lat(), 
 						ne_lng: currentBounds.getNorthEast().lng(), 
 						sw_lat: currentBounds.getSouthWest().lat(), 
-						sw_lng: currentBounds.getSouthWest().lng()
+						sw_lng: currentBounds.getSouthWest().lng(),
+						fbUserId: ('<?php echo $profile_id; ?>' == '' ? 0 : '<?php echo $profile_id; ?>')
 					},
 				}).done(function(msg){
 					console.log("Received fresh markers");
@@ -158,7 +159,7 @@
 						lng: mm.lat_lng[1],
 						title: mm.place_short,
 						infoWindow : {
-							content: existingMarkerInfoWindowMarkup(mm.place_short, mm.place_long, mm.people, i, mm.place_hash)
+							content: existingMarkerInfoWindowMarkup(mm.place_short, mm.place_long, mm.people, mm.user_at_place, i, mm.place_hash)
 						}
 					});
 					
@@ -236,7 +237,8 @@
 						action: "markerForAddress",
 						fullAddress: fullAdd,
 						lat: latlng.lat(),
-						lng: latlng.lng()
+						lng: latlng.lng(),
+						fbUserId: ('<?php echo $profile_id; ?>' == '' ? 100 : '<?php echo $profile_id; ?>')
 					}
 				}).done(function(msg){
 					getMarkerForAddressHandler(msg, fullAdd, shortAdd, latlng);
@@ -293,7 +295,7 @@
 							lng: latlng.lng(),
 							title: dbMarker.place_short,
 							infoWindow: {
-								content: existingMarkerInfoWindowMarkup(dbMarker.place_short, dbMarker.place_long, dbMarker.people, markerNum, dbMarker.place_hash)
+								content: existingMarkerInfoWindowMarkup(dbMarker.place_short, dbMarker.place_long, dbMarker.people, dbMarker.user_at_place, markerNum, dbMarker.place_hash)
 							}
 						});
 						window.viewMarkers[markerNum] = m;  // add to view markers; may or may not be destroyed via prompt
@@ -342,7 +344,7 @@
 					   "</div>";
 			}
 		
-			function existingMarkerInfoWindowMarkup(shortAddress, fullAddress, people, markerNum, hash)
+			function existingMarkerInfoWindowMarkup(shortAddress, fullAddress, people, userIsHere, markerNum, hash)
 			{
 				var peopleImageList = "";
 				for(p in people)
@@ -353,11 +355,17 @@
 
 				markup = "<div id='infoWindow' style='height:"+ ((Math.ceil(people.length / 6)+2)*30) +"px'>" +
 					   "Wharton peeps at " + shortAddress + ": <br/>" +
-					   peopleImageList + " <a href='place.php?hash=" + hash + "'>more..</a><br/>" +
-					   "<button class='btn btn-mini btn-success infoWindowButtons' type='submit' id='addUser'>Add</button>" +
-					   "<button class='btn btn-mini btn-info infoWindowButtons' type='submit' id='moreUsers'>More</button>" +
-					   "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
+					   peopleImageList + " <a href='place.php?hash=" + hash + "'>more..</a><br/>";
+					
+				if (userIsHere)
+					markup += "<button class='btn btn-mini btn-success infoWindowButtons disabled' type='submit' id='addUser'>You're here</button>";  					
+				else
+					markup += "<button class='btn btn-mini btn-success infoWindowButtons' type='submit' id='addUser'>Add Yourself Here</button>";
+				
+				markup += "<input type='hidden' id='markerNum' name='markerNum' value='"+ markerNum +"'/>" +
+					   "<input type='hidden' id='hash' name='hash' value='"+ hash +"'/>" +
 					   "</div>";
+					
 				return markup;
 			}
 			
@@ -378,14 +386,18 @@
 
 						$("#p"+previews[p].profile_id).ready(function(){
 							$(this).attr('href', previews[p].profile_url);
-							$(this).attr('title', previews[p].profile_name);
+							$(this).attr('alt', previews[p].profile_name);
 						});
 					}
 				});
 			}
 			
 			
-			
+			/**** 
+
+				Begin on document ready 
+
+			*****/
 			
 	
 			$(document).ready(function(){
@@ -460,7 +472,7 @@
 				// 	  $('#infoWindow').parent().parent().parent().height(height);
 				// 	});
 				
-				// Marker confirmation - Yes handler
+				// Marker (New Location) confirmation - Yes handler
 				$('#fullScreenMap').on('click','#yesMarker',function(e){
 					markerNum = $('#markerNum').val().toString();
 					console.log("yes clicked: " + markerNum);
@@ -482,7 +494,7 @@
 					
 					// Dismiss info window
 					marker = window.viewMarkers[markerNum];
-					window.viewMarkers[markerNum].infoWindow.content = existingMarkerInfoWindowMarkup(shortAdd, fullAdd, [fb], markerNum, 0);
+					window.viewMarkers[markerNum].infoWindow.content = existingMarkerInfoWindowMarkup(shortAdd, fullAdd, [fb], true, markerNum, 0);
 					window.viewMarkers[markerNum].infoWindow.close();
 					window.viewMarkers[markerNum].dirty = true;  // set dirty flag
 					
@@ -496,7 +508,7 @@
 					refreshMarkers();
 				});
 
-				// Marker confirmation - No handler
+				// Marker (New Location) confirmation - No handler
 				$('#fullScreenMap').on('click','#noMarker',function(e){
 					markerNum = $('#markerNum').val().toString();
 					console.log("no clicked: " + markerNum);
@@ -505,6 +517,33 @@
 					marker.setMap(null);		  // remove from view
 					delete window.viewMarkers[markerNum];  // remove from client model
 				});
+				
+				// InfoWindow Add User to Location - button handler
+				$('#fullScreenMap').on('click','#addUser',function(e){
+					placeHash = $('#hash').val().toString();
+					markerNume = $('#markerNum').val().toString();
+					
+					if (!$(this).hasClass('disabled'))
+					{
+						console.log("add user to placeHash: " + placeHash);
+					
+						$.ajax({
+							type: "POST",
+							url: "db/save.php",
+							data: {
+								action: "addUserToPlace",
+								placeHash: placeHash,
+								//TODO: remove this debug eventually
+								fbUserId: ('<?php echo $profile_id; ?>' == '' ? 0 : '<?php echo $profile_id; ?>'),
+								ip: window.clientIP
+							}
+						}).done(function(msg){
+							$("#addUser").addClass("disabled");
+							$("#addUser").text("You're here");
+						});
+					}
+				});
+				
 				
 			});
 		</script>
