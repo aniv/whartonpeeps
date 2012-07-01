@@ -43,8 +43,13 @@
 			// Neither in test nor wharton fb groups
 			if (!isset($groupsW['data']['uid']) and !isset($groupsT['data']['gid']))
 			{
-	            header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
-	            exit();
+				d($groupsW);
+				echo !isset($groupsW['data']['uid']);
+				d($groupsT);
+				echo !isset($groupsT['data']['gid']);
+				
+	            // header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+	            // exit();
 			}
 
 	    } catch (FacebookApiException $e) {

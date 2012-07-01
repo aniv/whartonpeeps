@@ -90,8 +90,8 @@ if ($user_id) {
 						        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
 						    ));
 
-							// d($groupsW);
-							// d($groupsT);
+							d($groupsW);
+							d($groupsT);
 							// 
 							// if (isset($groups['data']['uid'], $groups['data']['gid']))
 							// {
@@ -100,7 +100,7 @@ if ($user_id) {
 							// 	echo '</div>';
 							// }
 
-							echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out</a></div>';
+							echo '<div><a href="main.php">Continue</a> or <a href="' . $facebook->getLogoutUrl() . '">Log-out</a></div>';
 						}
 						?>
 				</div>
