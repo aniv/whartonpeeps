@@ -41,12 +41,10 @@
 		    ));
 
 			// Neither in test nor wharton fb groups
-			if (!isset($groupsW['data']['uid']) and !isset($groupsT['data']['gid']))
+			if (strval($groupsW['data']['gid']) != "169174513170821" and strval($groupsT['data']['gid']) != "330277880384395")
 			{
 				d($groupsW);
-				echo !isset($groupsW['data']['uid']);
 				d($groupsT);
-				echo !isset($groupsT['data']['gid']);
 				
 	            // header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
 	            // exit();
