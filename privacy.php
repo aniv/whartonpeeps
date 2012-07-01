@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
-		<title>WhartonPeeps</title>
+		<title>WhartonPeeps | Privacy</title>
 		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
@@ -43,15 +43,15 @@
 					WhartonPeeps uses the Facebook APIs to:
 						<ul>
 							<li>read your name, picture, networks and Facebook user ID</li>
-							<li>validate that you're in the Wharton 2014 FB group</li>
+							<li>validate that you're in the "Wharton MBA Class of 2014" Facebook group</li>
 						</ul>
 					
-					Depending on how you use WhartonPeeps, we might store and share information with members of the Wharton 2014 Facebook group, including:
+					Depending on how you use WhartonPeeps, we might store and share information with members of the "Wharton MBA Class of 2014" Facebook group, including:
 						<ul>
-							<li>your address (if provided; stored and shared)</li>
+							<li>your address (if provided; stored and displayed)</li>
 							<li>your Facebook user ID (if provided; stored)</li>
-							<li>your Facebook network names (if provided; shared but not stored)</li>
-							<li>your Facebook profile photo (if provided; shared but not stored)</li>
+							<li>your Facebook network names (if provided; displayed but not stored)</li>
+							<li>your Facebook profile photo (if provided; displayed but not stored)</li>
 						</ul>
 						
 					If you've got questions or concerns about privacy, please feel free to drop me an email via the <a href="about.php">About</a> page.

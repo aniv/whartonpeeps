@@ -28,9 +28,25 @@
 	        # Fetch the viewer's basic information
 	        $basic = $facebook->api('/me?fields=id,name,picture,link');
 	
-			/* TODO: Check to see if the user is in the Wharton2012 group! */
-	
-	
+			// Wharton = 169174513170821
+			// Test = 330277880384395
+		    $groupsW = $facebook->api(array(
+		        'method' => 'fql.query',
+		        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 169174513170821 AND uid=me()'
+		    ));
+
+		    $groupsT = $facebook->api(array(
+		        'method' => 'fql.query',
+		        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
+		    ));
+
+			// Neither in test nor wharton fb groups
+			if (!isset($groupsW['data']['uid']) and !isset($groupsT['data']['gid']))
+			{
+	            header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+	            exit();
+			}
+
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
 	        # cleared if the error is because of an invalid accesstoken

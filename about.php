@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
-		<title>WhartonPeeps</title>
+		<title>WhartonPeeps | About</title>
 		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
