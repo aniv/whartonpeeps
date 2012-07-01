@@ -41,13 +41,33 @@
 		    ));
 
 			// Neither in test nor wharton fb groups
-			if (strval($groupsW['data']['gid']) != "169174513170821" and strval($groupsT['data']['gid']) != "330277880384395")
+			if (array_key_exists('data', $groupsW) or array_key_exists('data', $groupsT))
 			{
-				d($groupsW);
-				d($groupsT);
+				if (array_key_exists('data', $groupsW))
+				{
+					if (strval($groupsW['data']['gid']) != "169174513170821")
+					{
+						echo "not in wharton group";
+						d($groupsW);
+						d($groupsT);
+					}
+				}
 				
+				if (array_key_exists('data', $groupsT))
+				{
+					if (strval($groupsT['data']['gid']) != "330277880384395"))
+					{
+						echo "not in test group";
+						d($groupsW);
+						d($groupsT);
+					}
+				}
+			}
+			else
+			{
 	            // header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
 	            // exit();
+				echo "would have redirected";
 			}
 
 	    } catch (FacebookApiException $e) {
