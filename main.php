@@ -41,26 +41,22 @@
 		    ));
 
 			// Neither in test nor wharton fb groups
-			if (array_key_exists('data', $groupsW) or array_key_exists('data', $groupsT))
+			if (count($groupsW) > 0)
 			{
-				if (array_key_exists('data', $groupsW))
+				if (strval($groupsW['data']['gid']) != "169174513170821")
 				{
-					if (strval($groupsW['data']['gid']) != "169174513170821")
-					{
-						echo "not in wharton group";
-						d($groupsW);
-						d($groupsT);
-					}
+					echo "not in wharton group";
+					d($groupsW);
+					d($groupsT);
 				}
-				
-				if (array_key_exists('data', $groupsT))
+			}
+			elseif (count($groupsT) > 0)
+			{
+				if (strval($groupsT['data']['gid']) != "330277880384395")
 				{
-					if (strval($groupsT['data']['gid']) != "330277880384395")
-					{
-						echo "not in test group";
-						d($groupsW);
-						d($groupsT);
-					}
+					echo "not in test group";
+					d($groupsW);
+					d($groupsT);
 				}
 			}
 			else
