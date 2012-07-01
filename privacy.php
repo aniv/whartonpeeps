@@ -2,6 +2,7 @@
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
 		<title>WhartonPeeps</title>
+		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
 
@@ -35,25 +36,32 @@
 				</div>
 			</div>
 
-			<p>WhartonPeeps uses the Facebook APIs to:
-				<ul>
-					<li>access your name, picture and Facebook user ID</li>
-					<li>validate that you're in the Wharton 2014 FB group</li>
-					<li>find your FB friends who are in the Wharton 2014 FB group</li>
-				</ul>
-			</p>
-			<p>Depending on how you use WhartonPeeps, we might store and share information with members of the Wharton 2014 FB group, including:
-				<ul>
-					<li>your FB user ID</li>
-					<li>your address (as provided)</li>
-					<li>your comments (as provided)</li>
-				</ul>
-			</p>
+			<div class="row">
+				<div class="span9 offset1">
+					It's important that you understand how WhartonPeeps uses your information. <br/><br/>
+					
+					WhartonPeeps uses the Facebook APIs to:
+						<ul>
+							<li>read your name, picture, networks and Facebook user ID</li>
+							<li>validate that you're in the Wharton 2014 FB group</li>
+						</ul>
+					
+					Depending on how you use WhartonPeeps, we might store and share information with members of the Wharton 2014 Facebook group, including:
+						<ul>
+							<li>your address (if provided; stored and shared)</li>
+							<li>your Facebook user ID (if provided; stored)</li>
+							<li>your Facebook network names (if provided; shared but not stored)</li>
+							<li>your Facebook profile photo (if provided; shared but not stored)</li>
+						</ul>
+						
+					If you've got questions or concerns about privacy, please feel free to drop me an email via the <a href="about.php">About</a> page.
+				</div>
+			</div>
 
 			<br/>
 			<div class="row">
 				<div class="span2 offset1">
-					<a href="about.php">About</a> | <a href="privacy.php">Privacy</a>
+					<a href="index.php">Home</a> | <a href="about.php">About</a>
 				</div>
 			</div>
 		</div>

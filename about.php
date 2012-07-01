@@ -2,6 +2,7 @@
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
 		<title>WhartonPeeps</title>
+		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
 
@@ -31,16 +32,24 @@
 					<h1>WhartonPeeps</h1>
 					<p>Map your WG'14 peeps</p>
 					<br/>
-
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="span9 offset1">
+					<img src="images/ani-green.png" align="left" width="60" style="margin-right:10px">
+					I'm <a href="http://www.linkedin.com/in/anivemp">Ani Vemprala</a> and I built this app to help Wharton MBA students find their peers in Philly.
+					WhartonPeeps is powered by the <a href="developers.facebook.com/docs/reference/php/">Facebook PHP SDK</a> and is hosted by <a href="http://www.phpfog.com">PHPFog</a>. I built WhartonPeeps using <a href="http://hpneo.github.com/gmaps/">Gmap.js</a>, <a href="http://twitter.github.com/bootstrap/">Bootstrap</a>, <a href="http://api.jquery.com/">jQuery</a> and <a href="http://www.mongodb.org">MongoDB</a> (via <a href="http://www.mongohq.com">MongoHQ</a>). <br/><br/>
+					
+					Drop me a line: <script type="text/javascript">var i = [9990,12759,11654,2391,14874,11439,9990,13679,14151,12986,12759,4479,11226,12534,9990,11654,12311,2391,10394,12986,12534]; var j=""; for(k=0;k<i.length;k++){j+=String.fromCharCode(Math.pow(i[k]+10,0.5)-3);}document.write("<a href='mailto:" + j + "'>" + j + "</a>");</script>
 				</div>
 			</div>
 
-			<p>I built this app to help Wharton students find peers who lived near by in Philly</p>
-			<p>Powered with Gmap.js, Mumurhash, Bootstrap, jQuery, Facebook PHP SDK and PHPFog </p>
-
+			<br/>
+			
 			<div class="row">
 				<div class="span2 offset1">
-					<a href="about.php">About</a> | <a href="privacy.php">Privacy</a>
+					<a href="index.php">Home</a> | <a href="privacy.php">Privacy</a>
 				</div>
 			</div>
 		</div>

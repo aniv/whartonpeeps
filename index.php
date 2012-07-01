@@ -44,6 +44,7 @@ if ($user_id) {
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
 		<title>WhartonPeeps</title>
+		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
 		<script type="text/javascript">
@@ -73,7 +74,7 @@ if ($user_id) {
 					<p>Map your WG'14 peeps</p>
 					<?php if(!isset($basic)) { ?>
 					<br/>
-			    	<div class="fb-login-button" size="xlarge" data-scope="user_groups" scope="user_groups"></div>
+			    	<div class="fb-login-button" size="xlarge" data-scope="user_groups" scope="user_groups" id="fb-login-button"></div>
 					<?php 
 						} 
 						else { 
