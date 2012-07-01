@@ -55,7 +55,7 @@
 				
 				if (array_key_exists('data', $groupsT))
 				{
-					if (strval($groupsT['data']['gid']) != "330277880384395"))
+					if (strval($groupsT['data']['gid']) != "330277880384395")
 					{
 						echo "not in test group";
 						d($groupsW);
