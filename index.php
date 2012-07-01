@@ -72,11 +72,11 @@ if ($user_id) {
 				<div class="span9">
 					<h1>WhartonPeeps</h1>
 					<p>Map your WG'14 peeps</p>
-					<?php /*if(!isset($basic)) { */ ?>
+					<?php if(!isset($basic)) { ?>
 					<br/>
 			    	<div class="fb-login-button" size="xlarge" data-scope="user_groups" scope="user_groups" id="fb-login-button"></div>
 					<?php 
-						/*} 
+						} 
 						else { 
 							// Wharton = 169174513170821
 							// Test = 330277880384395
@@ -90,18 +90,18 @@ if ($user_id) {
 						        'query' => 'SELECT uid, gid FROM group_member WHERE gid = 330277880384395 AND uid=me()'
 						    ));
 
-							d($groupsW);
-							d($groupsT);
+							// d($groupsW);
+							// d($groupsT);
+							// 
+							// if (isset($groups['data']['uid'], $groups['data']['gid']))
+							// {
+							// 	echo '<div>';
+							// 	echo 'User is in group <br/>';
+							// 	echo '</div>';
+							// }
 
-							if (isset($groups['data']['uid'], $groups['data']['gid']))
-							{
-								echo '<div>';
-								echo 'User is in group <br/>';
-								echo '</div>';
-							}
-
-							echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out URL</a></div>';
-						}*/
+							echo '<div><a href="' . $facebook->getLogoutUrl() . '">Log-out</a></div>';
+						}
 						?>
 				</div>
 			</div>
