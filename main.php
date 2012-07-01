@@ -41,20 +41,24 @@
 		    ));
 
 			// Neither in test nor wharton fb groups
+			$authorized = false;
+			
 			if (count($groupsW) > 0)
 			{
-				if (strval($groupsW['data']['gid']) != "169174513170821")
+				if (strval($groupsW[0]['gid']) == "169174513170821")
 				{
-					echo "not in wharton group";
+					echo "in wharton group";
+					$authorized = true;
 					d($groupsW);
 					d($groupsT);
 				}
 			}
 			elseif (count($groupsT) > 0)
 			{
-				if (strval($groupsT['data']['gid']) != "330277880384395")
+				if (strval($groupsT[0]['gid']) == "330277880384395")
 				{
-					echo "not in test group";
+					echo "in test group";
+					$authorized = true;
 					d($groupsW);
 					d($groupsT);
 				}
@@ -65,7 +69,13 @@
 	            // exit();
 				echo "would have redirected";
 			}
-
+			
+			// if ($authorized == false)
+			// {
+			// 	            header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+			// 	            exit();
+			// }
+			
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be
 	        # cleared if the error is because of an invalid accesstoken
