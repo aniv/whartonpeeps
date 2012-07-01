@@ -47,34 +47,34 @@
 			{
 				if (strval($groupsW[0]['gid']) == "169174513170821")
 				{
-					echo "in wharton group";
+					// echo "in wharton group";
 					$authorized = true;
-					d($groupsW);
-					d($groupsT);
+					// d($groupsW);
+					// d($groupsT);
 				}
 			}
 			elseif (count($groupsT) > 0)
 			{
 				if (strval($groupsT[0]['gid']) == "330277880384395")
 				{
-					echo "in test group";
+					// echo "in test group";
 					$authorized = true;
-					d($groupsW);
-					d($groupsT);
+					// d($groupsW);
+					// d($groupsT);
 				}
 			}
 			else
 			{
 	            // header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
 	            // exit();
-				echo "would have redirected";
+				// echo "would have redirected";
 			}
 			
-			// if ($authorized == false)
-			// {
-			// 	            header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
-			// 	            exit();
-			// }
+			if ($authorized == false)
+			{
+	            header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+	            exit();
+			}
 			
 	    } catch (FacebookApiException $e) {
 	        # If the call fails we check if we still have a user. The user will be

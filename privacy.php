@@ -38,7 +38,7 @@
 
 			<div class="row">
 				<div class="span9 offset1">
-					It's important that you understand how WhartonPeeps uses your information. <br/><br/>
+					Concerned about privacy? Here's a description of how WhartonPeeps uses your information. <br/><br/>
 					
 					WhartonPeeps uses the Facebook APIs to:
 						<ul>
@@ -48,10 +48,10 @@
 					
 					Depending on how you use WhartonPeeps, we might store and share information with members of the "Wharton MBA Class of 2014" Facebook group, including:
 						<ul>
-							<li>your address (if provided; stored and displayed)</li>
-							<li>your Facebook user ID (if provided; stored)</li>
-							<li>your Facebook network names (if provided; displayed but not stored)</li>
-							<li>your Facebook profile photo (if provided; displayed but not stored)</li>
+							<li>your address (if address submitted; stored and displayed)</li>
+							<li>your Facebook user ID (if address submitted; stored)</li>
+							<li>your Facebook network names (if address submitted; displayed but not stored)</li>
+							<li>your Facebook profile photo (if address submitted; displayed but not stored)</li>
 						</ul>
 						
 					If you've got questions or concerns about privacy, please feel free to drop me an email via the <a href="about.php">About</a> page.
