@@ -149,7 +149,7 @@
 			<b>Start here!</b> Search for your address in the box:
 		</div>
 		<form method="post" class="form-search span6" id="addressForm" style="margin-top:4px">
-			<input type="text" class="input-xxlarge" placeholder="Enter your address here" id="addressBox">
+			<input type="text" class="input-xxlarge" placeholder="Enter your address here (exclude apartment numbers and building names)" id="addressBox">
 			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
