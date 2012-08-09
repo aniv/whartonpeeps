@@ -94,7 +94,9 @@
 	}
 	else
 	{
-		echo "<!-- No Facebook data available -->";
+		// echo "<!-- No Facebook data available -->";
+        header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+        exit();
 	}	
 ?>
 
