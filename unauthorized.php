@@ -61,7 +61,7 @@
 			
 			<div class="row">
 				<div class="span9 offset1">
-					<span class="label label-important">Error</span> Sorry, it looks like you're not authorized to access WhartonPeeps. That's probably because you're not a member of the "Wharton MBA Class of 2014" Facebook group. You can <a href='<?php echo $facebook->getLogoutUrl(array("next"=>AppInfo::getUrl('/index.php'))); ?>'>log out</a> of WhartonPeeps if you'd like.
+					<span class="label label-important">Error</span> Sorry, it looks like you're not authorized to access WhartonPeeps. That's probably because you're not a member of the "Wharton MBA Class of 2014" Facebook group. You can try to <a href='<?php echo $facebook->getLogoutUrl(array("next"=>AppInfo::getUrl('/index.php'))); ?>'>login</a> to WhartonPeeps again if you'd like.
 				</div>
 			</div>
 
