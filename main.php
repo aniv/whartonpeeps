@@ -102,12 +102,15 @@
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
     <head>
 		<title>WhartonPeeps</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script type="text/javascript" src="javascript/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="javascript/murmurhash-3.min.js"></script>		
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
 		<script type="text/javascript" src="javascript/bootstrap.min.js"></script>
 		<script type="text/javascript" src="javascript/gmaps.js"></script>
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css"  type="text/css" />
+        <link rel="stylesheet" href="stylesheets/bootstrap-responsive.min.css"  type="text/css" />
+        <link rel="stylesheet" href="stylesheets/mobile.css"  type="text/css" />
 		<style>
 		#infoWindow {
 			width: 250px;
@@ -150,10 +153,10 @@
 		</div>
 		<form method="post" class="form-search span6" id="addressForm" style="margin-top:4px">
 			<input type="text" class="input-xxlarge" placeholder="Enter your address here (exclude apartment numbers and building names)" id="addressBox">
-			<button type="submit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
+			<button type="submit" id="findit" class="btn btn-primary"><i class="icon-map-marker icon-white"></i> Find it!</button>
 			<img src="images/ajax-loader.gif" id="spinner" height="28px" style="padding-left:25px">
 		</form>
-		<div class="span2">
+		<div class="span2 hidden-phone">
 			<a class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" style="margin-top:4px" alt="<?php if (!$user_id) echo "Facebook API Unavailable"; else echo "Logout"; ?>" href="<?php if ($user_id) echo $facebook->getLogoutUrl(array("next"=>"https://".$_SERVER['HTTP_HOST'])); ?>">Log-out</a>
 		</div>
 	</div>
@@ -608,5 +611,10 @@
 		</script>
 	</div>
 	</div>
+	
+	<div class="span2 visible-phone">
+		<a id="logoutPhone" class="btn btn-inverse <?php if (!$user_id) echo "disabled"; ?>" alt="<?php if (!$user_id) echo "Facebook API Unavailable"; else echo "Logout"; ?>" href="<?php if ($user_id) echo $facebook->getLogoutUrl(array("next"=>"https://".$_SERVER['HTTP_HOST'])); ?>">Log-out</a>
+	</div>
+	
 </body>
 </html>

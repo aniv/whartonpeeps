@@ -1,19 +1,38 @@
-body {
-  margin: 10px;
-  width: auto;
+/*
+ * Media query definitions courtesy: http://css-tricks.com/snippets/css/media-queries-for-standard-devices/
+ */
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (max-width : 320px) {
+  #infoBox {
+	display: none;
+  }
+  #findit {
+	width: 280px;
+  }
+  #addressBox {
+	margin-bottom: 10px;
+  }
+  #logoutPhone {
+	margin-top: 10px;
+	width: 260px;
+  }
 }
 
-#guides ul li,
-#samples .list {
-  float: none;
-  margin: 0 auto 10px;
-  width: 172px;
+/* Smartphones (landscape) ----------- */
+@media only screen 
+and (min-width : 321px) and (max-device-width : 767px) { 
+  #infoBox {
+	display: none;
+  }
+  #findit {
+	width: 440px;
+  }
+  #logoutPhone {
+	margin-top:10px;
+	width: 420px;
+  }
 }
 
-#share-app li {
-  margin: 0 8px 4px 0;
-}
-
-#share-app {
-  width: auto;
-}
+/* body { margin: 10px; width: auto; } #guides ul li, #samples .list { float: none; margin: 0 auto 10px; width: 172px; } #share-app li { margin: 0 8px 4px 0; } #share-app { width: auto; } */
