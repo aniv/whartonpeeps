@@ -12,7 +12,6 @@
 
 	function GetProdDb()
 	{
-		//$m = new Mongo("mongodb://wpeep:wpeep@flame.mongohq.com:27092/phpfogffc59520_9d6d_012f_df4e_7efd45a4c57b");
 		$m = new Mongo(getenv("MONGOHQ_URL"));
 		$db = $m->selectDB("phpfogffc59520_9d6d_012f_df4e_7efd45a4c57b");
 		return $db;
