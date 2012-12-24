@@ -94,9 +94,13 @@
 	}
 	else
 	{
-		// echo "<!-- No Facebook data available -->";
-        header('Location: ' . AppInfo::getUrl('/unauthorized.php?error=2'));
-        exit();
+		echo "<!-- No Facebook data available -->";
+		// Bug with FB PHP SDK: getUser will return 0 even if user is authenticated
+		// Apparently a cookie is not being set/picked up.
+		// Based on suggestion from user on http://developers.facebook.com/bugs/329691477106504
+		// creating a temporary page to reauthenticate via FB JS SDK
+        // header('Location: ' . AppInfo::getUrl('/unauthorized.php?error=2'));
+        // exit();
 	}	
 ?>
 
