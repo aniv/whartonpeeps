@@ -65,14 +65,14 @@
 			}
 			else
 			{
-	            // header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+	            // header('Location: ' . AppInfo::getUrl('/unauthorized.php?error=3'));
 	            // exit();
 				// echo "would have redirected";
 			}
 			
 			if ($authorized == false)
 			{
-	            header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+	            header('Location: ' . AppInfo::getUrl('/unauthorized.php?error=1'));
 	            exit();
 			}
 			
@@ -95,7 +95,7 @@
 	else
 	{
 		// echo "<!-- No Facebook data available -->";
-        header('Location: ' . AppInfo::getUrl('/unauthorized.php'));
+        header('Location: ' . AppInfo::getUrl('/unauthorized.php?error=2'));
         exit();
 	}	
 ?>
