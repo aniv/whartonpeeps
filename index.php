@@ -137,7 +137,8 @@ if ($user_id) {
             // user asking if they want to send data again.
 
             //window.location = window.location;
-			window.location = "http://whartonpeeps.phpfogapp.com/main.php";
+			// window.location = "http://whartonpeeps.phpfogapp.com/main.php";
+			window.location = "http://whartonpeeps.aws.af.cm/main.php";
         });
 
         FB.Canvas.setAutoGrow();
