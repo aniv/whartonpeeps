@@ -138,7 +138,7 @@ if ($user_id) {
 
             //window.location = window.location;
 			// window.location = "http://whartonpeeps.phpfogapp.com/main.php";
-			window.location = "http://whartonpeeps.aws.af.cm/main.php";
+			window.location =  "http://whartonpeeps.aws.af.cm/main.php";
         });
 
         FB.Canvas.setAutoGrow();
